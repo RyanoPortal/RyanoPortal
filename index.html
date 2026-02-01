@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetFlow Navigator - Trip Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased transition-colors duration-300">
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950">
+        <div class="w-full max-w-md p-8 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+                    <i data-feather="truck" class="w-8 h-8 text-white"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-white mb-2">FleetFlow Navigator</h1>
+                <p class="text-slate-400">Trip Management System</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Employee ID</label>
+                    <input type="text" id="employeeId" class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-white placeholder-slate-500" placeholder="Enter ID (driver1 or manager1)" required>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-white placeholder-slate-500" placeholder="Enter password" required>
+                </div>
+                
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center text-slate-400">
+                        <input type="checkbox" class="mr-2 rounded bg-slate-800 border-slate-600 text-blue-600 focus:ring-blue-500">
+                        Remember me
+                    </label>
+                    <a href="#" class="text-blue-400 hover:text-blue-300">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 flex items-center justify-center gap-2">
+                    <i data-feather="log-in" class="w-4 h-4"></i>
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="mt-6 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                <p class="text-xs text-slate-400 text-center mb-2">Demo Credentials:</p>
+                <div class="text-xs text-slate-500 text-center space-y-1">
+                    <p>Driver: driver1 / driver123</p>
+                    <p>Manager: manager1 / manager123</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="appContainer" class="hidden min-h-screen flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col transition-all duration-300">
+            <div class="p-6 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i data-feather="truck" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-white text-lg">FleetFlow</h2>
+                        <p class="text-xs text-slate-500">Navigator</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <button onclick="app.navigate('dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                    <i data-feather="layout" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                
+                <button onclick="app.navigate('tripSheet')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors">
+                    <i data-feather="file-text" class="w-5 h-5"></i>
+                    <span>Trip Sheet</span>
+                </button>
+                
+                <button id="navDatabase" onclick="app.navigate('database')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors manager-only hidden">
+                    <i data-feather="database" class="w-5 h-5"></i>
+                    <span>Database</span>
+                </button>
+                
+                <button id="navSpreadsheet" onclick="app.navigate('spreadsheet')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors manager-only hidden">
+                    <i data-feather="grid" class="w-5 h-5"></i>
+                    <span>Spreadsheet</span>
+                </button>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-800 space-y-3">
+                <div class="flex items-center gap-3 px-4 py-2 text-sm text-slate-400">
+                    <i data-feather="user" class="w-4 h-4"></i>
+                    <span id="userDisplayName">User</span>
+                </div>
+                <button onclick="auth.toggleGoogleSignIn()" id="googleSignInBtn" class="w-full flex items-center gap-2 px-4 py-2 text-sm bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
+                    <i data-feather="shield" class="w-4 h-4"></i>
+                    <span>Connect Google</span>
+                </button>
+                <button onclick="auth.logout()" class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-red-900/20 rounded-lg transition-colors">
+                    <i data-feather="log-out" class="w-4 h-4"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col min-w-0">
+            <!-- Top Bar -->
+            <header class="h-16 bg-slate-900 border-b border-slate-800 flex items-center justify-between px-6 sticky top-0 z-40">
+                <div class="flex items-center gap-4">
+                    <button onclick="app.toggleSidebar()" class="p-2 hover:bg-slate-800 rounded-lg text-slate-400">
+                        <i data-feather="menu" class="w-5 h-5"></i>
+                    </button>
+                    <h1 id="pageTitle" class="text-xl font-semibold text-white">Dashboard</h1>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-full border border-slate-700">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-xs text-slate-300" id="googleStatus">Not Connected</span>
+                    </div>
+                    
+                    <button onclick="app.toggleDarkMode()" class="p-2 hover:bg-slate-800 rounded-lg text-slate-400 hover:text-yellow-400 transition-colors">
+                        <i data-feather="sun" class="w-5 h-5 hidden dark:block"></i>
+                        <i data-feather="moon" class="w-5 h-5 block dark:hidden"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Views -->
+            <main class="flex-1 overflow-y-auto p-6 bg-slate-900/50">
+                
+                <!-- Dashboard View -->
+                <div id="view-dashboard" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-blue-500/10 rounded-lg">
+                                    <i data-feather="calendar" class="w-6 h-6 text-blue-400"></i>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">Today</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-1" id="dashTripCount">0</h3>
+                            <p class="text-sm text-slate-400">Total Trips</p>
+                        </div>
+                        
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-green-500/10 rounded-lg">
+                                    <i data-feather="map" class="w-6 h-6 text-green-400"></i>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">Today</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-1" id="dashTotalMiles">0</h3>
+                            <p class="text-sm text-slate-400">Total Miles</p>
+                        </div>
+                        
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-orange-500/10 rounded-lg">
+                                    <i data-feather="clock" class="w-6 h-6 text-orange-400"></i>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">Today</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-1" id="dashTotalWait">0</h3>
+                            <p class="text-sm text-slate-400">Wait Minutes</p>
+                        </div>
+                        
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="p-3 bg-purple-500/10 rounded-lg">
+                                    <i data-feather="users" class="w-6 h-6 text-purple-400"></i>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">Active</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-1" id="dashActiveDrivers">0</h3>
+                            <p class="text-sm text-slate-400">Active Drivers</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Recent Trips</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="text-slate-400 border-b border-slate-700">
+                                        <tr>
+                                            <th class="pb-3 font-medium">Trip ID</th>
+                                            <th class="pb-3 font-medium">Driver</th>
+                                            <th class="pb-3 font-medium">Destination</th>
+                                            <th class="pb-3 font-medium">Miles</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentTripsTable" class="text-slate-300">
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="app.navigate('tripSheet')" class="p-4 bg-slate-700 hover:bg-slate-600 rounded-lg text-left transition-colors">
+                                    <i data-feather="plus-circle" class="w-6 h-6 text-blue-400 mb-2"></i>
+                                    <div class="font-medium text-white">New Trip</div>
+                                    <div class="text-xs text-slate-400">Record a new trip</div>
+                                </button>
+                                <button onclick="app.navigate('database')" class="p-4 bg-slate-700 hover:bg-slate-600 rounded-lg text-left transition-colors manager-only hidden">
+                                    <i data-feather="download" class="w-6 h-6 text-green-400 mb-2"></i>
+                                    <div class="font-medium text-white">Export Data</div>
+                                    <div class="text-xs text-slate-400">Download CSV reports</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Sheet View -->
+                <div id="view-tripSheet" class="view-section hidden space-y-6">
+                    <form id="tripSheetForm" class="space-y-6">
+                        <!-- Driver Section -->
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <i data-feather="user" class="w-5 h-5 text-blue-400"></i>
+                                Driver Information
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Driver Name</label>
+                                    <input type="text" name="driverName" id="tsDriverName" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Date</label>
+                                    <input type="date" name="date" id="tsDate" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Van ID</label>
+                                    <input type="text" name="vanId" id="tsVanId" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Crew Section -->
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <i data-feather="users" class="w-5 h-5 text-purple-400"></i>
+                                Crew & Route Information
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Destination</label>
+                                    <input type="text" name="destination" id="tsDestination" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Crew Name</label>
+                                    <input type="text" name="crewName" id="tsCrewName" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Dispatcher #</label>
+                                    <input type="text" name="dispatcher" id="tsDispatcher" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">RR #</label>
+                                    <input type="text" name="rrNumber" id="tsRR" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">H #</label>
+                                    <input type="text" name="hNumber" id="tsH" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Starting Odometer</label>
+                                    <input type="number" name="startOdometer" id="tsStartOdo" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none" required onchange="tripSheet.calculateTotals()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stops Section -->
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                                    <i data-feather="map-pin" class="w-5 h-5 text-red-400"></i>
+                                    Stops
+                                </h3>
+                                <button type="button" onclick="tripSheet.addStop()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                    <i data-feather="plus" class="w-4 h-4"></i>
+                                    Add Stop
+                                </button>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="text-slate-400 border-b border-slate-700">
+                                            <th class="pb-3 font-medium w-16">Stop #</th>
+                                            <th class="pb-3 font-medium">Time</th>
+                                            <th class="pb-3 font-medium">Odometer</th>
+                                            <th class="pb-3 font-medium">Location</th>
+                                            <th class="pb-3 font-medium">Why?</th>
+                                            <th class="pb-3 font-medium w-24">Wait (min)</th>
+                                            <th class="pb-3 font-medium w-16">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="stopsTableBody" class="text-slate-300">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- End of Trip Section -->
+                        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                            <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                                <i data-feather="flag" class="w-5 h-5 text-green-400"></i>
+                                End of Trip
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">EOT Time</label>
+                                    <input type="time" name="eotTime" id="tsEotTime" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">EOT Odometer</label>
+                                    <input type="number" name="eotOdometer" id="tsEotOdo" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none" onchange="tripSheet.calculateTotals()">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Total Wait (Auto)</label>
+                                    <input type="number" name="totalWait" id="tsTotalWait" class="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-400" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Total Miles (Auto)</label>
+                                    <input type="number" name="totalMiles" id="tsTotalMiles" class="w-full px-4 py-2 bg-slate-950 border border-slate-700 rounded-lg text-slate-400" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">Back Time</label>
+                                    <input type="time" name="backTime" id="tsBackTime" class="w-full px-4 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-4">
+                            <button type="button" onclick="tripSheet.clearForm()" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white font-medium rounded-lg transition-colors">
+                                Clear Form
+                            </button>
+                            <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center gap-2">
+                                <i data-feather="save" class="w-5 h-5"></i>
+                                Submit Trip Sheet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Database View (Manager Only) -->
+                <div id="view-database" class="view-section hidden space-y-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <h3 class="text-lg font-semibold text-white">Trip Database</h3>
+                            
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="databaseView.exportCSV()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                    <i data-feather="download" class="w-4 h-4"></i>
+                                    Export CSV
+                                </button>
+                                <button onclick="databaseView.exportToSpreadsheet()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+                                    <i data-feather="grid" class="w-4 h-4"></i>
+                                    Send to Spreadsheet
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 p-4 bg-slate-900/50 rounded-lg">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">From Date</label>
+                                <input type="date" id="dbFilterFrom" class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">To Date</label>
+                                <input type="date" id="dbFilterTo" class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Driver</label>
+                                <input type="text" id="dbFilterDriver" placeholder="Search driver..." class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 mb-1">Van ID</label>
+                                <input type="text" id="dbFilterVan" placeholder="Search van..." class="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div class="md:col-span-4 flex gap-2">
+                                <button onclick="databaseView.applyFilters()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors">
+                                    Apply Filters
+                                </button>
+                                <button onclick="databaseView.clearFilters()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded transition-colors">
+                                    Clear
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="text-slate-400 border-b border-slate-700">
+                                    <tr>
+                                        <th class="pb-3 font-medium">Trip ID</th>
+                                        <th class="pb-3 font-medium">Date</th>
+                                        <th class="pb-3 font-medium">Driver</th>
+                                        <th class="pb-3 font-medium">Van ID</th>
+                                        <th class="pb-3 font-medium">Destination</th>
+                                        <th class="pb-3 font-medium">Miles</th>
+                                        <th class="pb-3 font-medium">Wait (min)</th>
+                                        <th class="pb-3 font-medium">Stops</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="databaseTableBody" class="text-slate-300">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-4 flex items-center justify-between text-sm text-slate-400">
+                            <span id="dbRecordCount">0 records found</span>
+                            <div class="flex gap-2">
+                                <button onclick="databaseView.prevPage()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded" id="dbPrevBtn">Prev</button>
+                                <span id="dbPageInfo">Page 1</span>
+                                <button onclick="databaseView.nextPage()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 rounded" id="dbNextBtn">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spreadsheet View (Manager Only) -->
+                <div id="view-spreadsheet" class="view-section hidden space-y-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+                        <div class="flex items-center justify-between p-4 border-b border-slate-700">
+                            <div class="flex items-center gap-4">
+                                <h3 class="text-lg font-semibold text-white">Workspace</h3>
+                                <div class="flex gap-1" id="sheetTabs">
+                                    <!-- Dynamic tabs -->
+                                </div>
+                                <button onclick="spreadsheet.addSheet()" class="p-2 hover:bg-slate-700 rounded text-slate-400">
+                                    <i data-feather="plus" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="spreadsheet.importFromDatabase()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                                    Import from Database
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-auto max-h-[600px]" id="spreadsheetContainer">
+                            <div id="spreadsheetGrid" class="min-w-max">
+                                <!-- Grid rendered here -->
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 border-t border-slate-700 text-xs text-slate-400">
+                            <p>Supported formulas: =SUM(A1:A10), =AVERAGE(A1:A10), =B1+C1</p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <div class="bg-slate-800 border border-slate-700 text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-3">
+            <i data-feather="check-circle" class="w-5 h-5 text-green-400"></i>
+            <span id="toastMessage">Operation successful</span>
+        </div>
+    </div>
+
+    <script src="sheets.js"></script>
+    <script src="script.js"></script>
+    <script>feather.replace();</script>
+<script src="https://huggingface.co/deepsite/deepsite-badge.js"></script>
+</body>
+</html>

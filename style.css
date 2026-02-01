@@ -1,0 +1,193 @@
+:root {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --accent-primary: #3b82f6;
+    --accent-secondary: #06b6d4;
+    --border-color: #334155;
+}
+
+.light-mode {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f1f5f9;
+    --bg-tertiary: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #334155;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+/* Spreadsheet Grid Styles */
+.spreadsheet-grid {
+    display: grid;
+    grid-template-columns: 50px repeat(26, 100px);
+    background: var(--bg-secondary);
+}
+
+.spreadsheet-cell {
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 4px 8px;
+    font-size: 13px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: cell;
+    user-select: none;
+    transition: background-color 0.1s;
+}
+
+.spreadsheet-cell:hover {
+    background: var(--bg-secondary);
+}
+
+.spreadsheet-cell.selected {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: -2px;
+    z-index: 10;
+}
+
+.spreadsheet-cell.header {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    justify-content: center;
+    cursor: default;
+}
+
+.spreadsheet-cell.row-header {
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    font-size: 11px;
+    justify-content: center;
+    cursor: default;
+}
+
+.spreadsheet-cell input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-size: inherit;
+    outline: none;
+    padding: 0;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Form Focus States */
+input:focus, textarea:focus, select:focus {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Table Hover Effects */
+tbody tr:hover td {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+/* Button Transitions */
+button {
+    transition: all 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Toast Animation */
+.toast-show {
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+}
+
+/* Sidebar Active State */
+.nav-item.active {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border-right: 3px solid #3b82f6;
+}
+
+/* Loading State */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Print Styles for Trip Sheets */
+@media print {
+    #sidebar, header, .no-print {
+        display: none !important;
+    }
+    
+    #appContainer {
+        display: block !important;
+    }
+    
+    .view-section {
+        display: block !important;
+    }
+    
+    body {
+        background: white;
+        color: black;
+    }
+    
+    .bg-slate-800 {
+        background: white !important;
+        border: 1px solid #ccc !important;
+    }
+}
