@@ -218,6 +218,16 @@ tripForm.addEventListener("submit", async (e) => {
         tripMessage.textContent = "Please fill in all required fields.";
         return;
     }
+    // --- Basic Odometer Validation ---
+if (isNaN(startOdometer) || isNaN(endOdometer)) {
+    tripMessage.textContent = "Odometer values must be numbers.";
+    return;
+}
+
+if (endOdometer < startOdometer) {
+    tripMessage.textContent = "End odometer cannot be less than start odometer.";
+    return;
+}
 
     const stops = collectStops();
     const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
