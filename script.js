@@ -3,8 +3,8 @@ const users = [
     { id: "driver1", password: "1234", role: "driver" },
     { id: "Mike Mike", password: "2024", role: "driver" },
     { id: "Big B", password: "8183", role: "driver" },
-    { id: "manager1", password: "5678", role: "manager" }
-    { id: "B Mgr", password: "0516", role: "manager" }
+    { id: "manager1", password: "5678", role: "manager" },
+    { id: "B Mgr", password: "0516", role: "manager" },
 ];
 
 let currentUser = null;
