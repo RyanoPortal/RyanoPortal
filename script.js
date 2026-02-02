@@ -228,6 +228,43 @@ if (endOdometer < startOdometer) {
     tripMessage.textContent = "End odometer cannot be less than start odometer.";
     return;
 }
+    // --- Basic Time Format Validation ---
+function isValidTimeRange(str) {
+    // Must contain a dash
+    if (!str.includes("-")) return false;
+
+    const [start, end] = str.split("-");
+
+    // Must be 4 digits each
+    if (start.length !== 4 || end.length !== 4) return false;
+
+    // Must be numbers
+    if (isNaN(start) || isNaN(end)) return false;
+
+    // Convert to minutes for comparison
+    const startMin = parseInt(start.slice(0, 2)) * 60 + parseInt(start.slice(2));
+    const endMin = parseInt(end.slice(0, 2)) * 60 + parseInt(end.slice(2));
+
+    // Hours must be valid
+    if (parseInt(start.slice(0, 2)) > 23 || parseInt(end.slice(0, 2)) > 23) return false;
+
+    // Minutes must be valid
+    if (parseInt(start.slice(2)) > 59 || parseInt(end.slice(2)) > 59) return false;
+
+    // End must be after start
+    return endMin >= startMin;
+}
+
+// Validate startTime and endTime
+if (!isValidTimeRange(startTime)) {
+    tripMessage.textContent = "Start time must be in HHMM-HHMM format.";
+    return;
+}
+
+if (!isValidTimeRange(endTime)) {
+    tripMessage.textContent = "End time must be in HHMM-HHMM format.";
+    return;
+}
 
     const stops = collectStops();
     const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
