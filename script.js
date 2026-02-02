@@ -84,7 +84,6 @@ function applyRoleUI() {
     const sheetBtn = document.querySelector('[data-view="spreadsheet"]');
 
     if (isDriver) {
-        // Hide manager-only views
         if (dbBtn) dbBtn.style.display = "none";
         if (sheetBtn) sheetBtn.style.display = "none";
     } else {
@@ -99,7 +98,6 @@ navButtons.forEach(btn => {
         const view = btn.getAttribute("data-view");
         if (!view) return;
 
-        // Prevent drivers from manually navigating to manager views
         if (currentUser && currentUser.role === "driver") {
             if (view === "database" || view === "spreadsheet") {
                 return;
@@ -123,7 +121,12 @@ darkModeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
 });
 
-// --- Trip sheet: add/remove stops ---
+
+// ======================================================
+// === NEW STOP SYSTEM (FULL REPLACEMENT) ===============
+// ======================================================
+
+// Add Stop Row
 addStopRowBtn.addEventListener("click", () => {
     const lastRow = stopsTableBody.lastElementChild;
     const newRow = lastRow.cloneNode(true);
@@ -131,13 +134,16 @@ addStopRowBtn.addEventListener("click", () => {
     const newIndex = stopsTableBody.children.length + 1;
     newRow.querySelector(".stop-number").textContent = newIndex;
 
-    newRow.querySelectorAll("input").forEach(input => {
-        input.value = input.type === "number" ? "0" : "";
-    });
+    newRow.querySelector(".stop-times").value = "";
+    newRow.querySelector(".stop-location").value = "";
+    newRow.querySelector(".stop-odometer").value = "";
+    newRow.querySelector(".stop-why").value = "";
+    newRow.querySelector(".stop-wait").value = "0";
 
     stopsTableBody.appendChild(newRow);
 });
 
+// Remove Stop Row
 removeStopRowBtn.addEventListener("click", () => {
     if (stopsTableBody.children.length > 1) {
         stopsTableBody.removeChild(stopsTableBody.lastElementChild);
@@ -145,17 +151,14 @@ removeStopRowBtn.addEventListener("click", () => {
     updateTotals();
 });
 
-// --- Trip sheet: totals ---
+// Totals
 function updateTotals() {
-    // Total wait
     let totalWait = 0;
     document.querySelectorAll(".stop-wait").forEach(input => {
-        const val = parseFloat(input.value) || 0;
-        totalWait += val;
+        totalWait += parseFloat(input.value) || 0;
     });
     totalWaitSpan.textContent = totalWait.toString();
 
-    // Total miles
     const startOdometer = parseFloat(document.getElementById("startOdometer").value) || 0;
     const endOdometer = parseFloat(document.getElementById("endOdometer").value) || 0;
     const miles = endOdometer - startOdometer;
@@ -164,13 +167,37 @@ function updateTotals() {
 
 document.getElementById("startOdometer").addEventListener("input", updateTotals);
 document.getElementById("endOdometer").addEventListener("input", updateTotals);
+
 stopsTableBody.addEventListener("input", e => {
     if (e.target.classList.contains("stop-wait")) {
         updateTotals();
     }
 });
 
-// --- Trip sheet: submit ---
+// Collect Stops
+function collectStops() {
+    const stops = [];
+
+    document.querySelectorAll("#stopsTable tbody tr").forEach(row => {
+        const times = row.querySelector(".stop-times").value.trim();
+        const location = row.querySelector(".stop-location").value.trim();
+        const odometer = row.querySelector(".stop-odometer").value.trim();
+        const why = row.querySelector(".stop-why").value.trim();
+        const wait = parseFloat(row.querySelector(".stop-wait").value) || 0;
+
+        if (times || location || odometer || why || wait > 0) {
+            stops.push({ times, location, odometer, why, wait });
+        }
+    });
+
+    return stops;
+}
+
+
+// ======================================================
+// === TRIP SUBMIT ======================================
+// ======================================================
+
 tripForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!currentUser) {
@@ -192,18 +219,7 @@ tripForm.addEventListener("submit", async (e) => {
         return;
     }
 
-    const stops = [];
-    document.querySelectorAll("#stopsTable tbody tr").forEach(row => {
-        const location = row.querySelector(".stop-location").value.trim();
-        const timeIn = row.querySelector(".stop-in").value;
-        const timeOut = row.querySelector(".stop-out").value;
-        const wait = parseFloat(row.querySelector(".stop-wait").value) || 0;
-
-        if (location || timeIn || timeOut || wait > 0) {
-            stops.push({ location, timeIn, timeOut, wait });
-        }
-    });
-
+    const stops = collectStops();
     const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
     const totalMiles = parseFloat(totalMilesSpan.textContent) || 0;
 
@@ -240,7 +256,11 @@ tripForm.addEventListener("submit", async (e) => {
     }
 });
 
-// --- Driver dashboard: load own trips ---
+
+// ======================================================
+// === DRIVER DASHBOARD =================================
+// ======================================================
+
 loadDriverTripsBtn.addEventListener("click", async () => {
     if (!currentUser || currentUser.role !== "driver") return;
 
@@ -274,7 +294,6 @@ loadDriverTripsBtn.addEventListener("click", async () => {
         `;
         driverTripsBody.appendChild(row);
 
-        // Rough hours calc if backend returns start/end times
         if (trip.startTime && trip.endTime) {
             const h = estimateHours(trip.tripDate, trip.startTime, trip.endTime);
             totalHours += h;
@@ -285,7 +304,6 @@ loadDriverTripsBtn.addEventListener("click", async () => {
     driverTotalHoursSpan.textContent = totalHours.toFixed(2);
 });
 
-// Rough hours estimate from date + times
 function estimateHours(dateStr, startTime, endTime) {
     try {
         const start = new Date(`${dateStr}T${startTime}`);
@@ -296,4 +314,4 @@ function estimateHours(dateStr, startTime, endTime) {
     } catch {
         return 0;
     }
-                              }
+}
