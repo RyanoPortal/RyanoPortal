@@ -127,35 +127,42 @@
                         </section>
 
                         <section class="card">
-                            <h2>Stops</h2>
-                            <div class="table-container">
-                                <table id="stopsTable">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Location</th>
-                                            <th>Time In</th>
-                                            <th>Time Out</th>
-                                            <th>Wait (min)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="stop-number">1</td>
-                                            <td><input type="text" class="stop-location" /></td>
-                                            <td><input type="time" class="stop-in" /></td>
-                                            <td><input type="time" class="stop-out" /></td>
-                                            <td><input type="number" class="stop-wait" value="0" /></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="button-row">
-                                <button type="button" id="addStopRow">Add Stop</button>
-                                <button type="button" id="removeStopRow">Remove Stop</button>
-                            </div>
-                        </section>
+    <h2>Stops</h2>
+    <div class="table-container">
+        <table id="stopsTable">
+            <thead>
+                <tr>
+                    <th>Stop #</th>
+                    <th>Times</th>
+                    <th>Location</th>
+                    <th>Odometer</th>
+                    <th>Why?</th>
+                    <th>Wait</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="stop-number">1</td>
+                    <td><input type="text" class="stop-times" placeholder="HHMM-HHMM"></td>
+                    <td><input type="text" class="stop-location"></td>
+                    <td><input type="text" class="stop-odometer"></td>
+                    <td><input type="text" class="stop-why" maxlength="4"></td>
+                    <td><input type="number" class="stop-wait" value="0"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
+    <div class="stop-buttons">
+        <button type="button" id="addStopRow">Add Stop</button>
+        <button type="button" id="removeStopRow">Remove Stop</button>
+    </div>
+
+    <div class="totals">
+        <p>Total Wait: <span id="totalWait">0</span> minutes</p>
+        <p>Total Miles: <span id="totalMiles">0</span></p>
+    </div>
+</section>
                         <section class="card">
                             <h2>End of Trip</h2>
                             <label for="endOdometer">End Odometer</label>
