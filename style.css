@@ -1,193 +1,316 @@
-:root {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-    --accent-primary: #3b82f6;
-    --accent-secondary: #06b6d4;
-    --border-color: #334155;
-}
-
-.light-mode {
-    --bg-primary: #ffffff;
-    --bg-secondary: #f1f5f9;
-    --bg-tertiary: #e2e8f0;
-    --text-primary: #0f172a;
-    --text-secondary: #334155;
-    --text-muted: #64748b;
-    --border-color: #cbd5e1;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #f4f4f4;
+    color: #222;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+.dark-mode {
+    background-color: #121212;
+    color: #eee;
 }
 
-::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+/* Layout */
+#app-container {
+    display: flex;
+    height: 100vh;
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--bg-tertiary);
+#sidebar {
+    width: 220px;
+    background-color: #222;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 1rem;
+    border-bottom: 1px solid #444;
+}
+
+#sidebar nav {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+}
+
+.nav-btn {
+    background: none;
+    border: none;
+    color: #ddd;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
     border-radius: 4px;
+    margin-bottom: 0.25rem;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #475569;
+.nav-btn:hover {
+    background-color: #333;
 }
 
-/* Spreadsheet Grid Styles */
-.spreadsheet-grid {
-    display: grid;
-    grid-template-columns: 50px repeat(26, 100px);
-    background: var(--bg-secondary);
+.nav-btn.active {
+    background-color: #555;
 }
 
-.spreadsheet-cell {
-    border-right: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    padding: 4px 8px;
-    font-size: 13px;
-    min-height: 28px;
+#main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#header {
+    height: 60px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
     display: flex;
     align-items: center;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    cursor: cell;
-    user-select: none;
-    transition: background-color 0.1s;
+    justify-content: space-between;
+    padding: 0 1rem;
 }
 
-.spreadsheet-cell:hover {
-    background: var(--bg-secondary);
+.dark-mode #header {
+    background-color: #1e1e1e;
+    border-bottom-color: #333;
 }
 
-.spreadsheet-cell.selected {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: -2px;
-    z-index: 10;
+#content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
 }
 
-.spreadsheet-cell.header {
-    background: var(--bg-tertiary);
-    color: var(--text-secondary);
-    font-weight: 600;
+/* Login overlay */
+#login-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
     justify-content: center;
-    cursor: default;
+    z-index: 1000;
 }
 
-.spreadsheet-cell.row-header {
-    background: var(--bg-tertiary);
-    color: var(--text-muted);
-    font-size: 11px;
-    justify-content: center;
-    cursor: default;
+#login-box {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 320px;
+    max-width: 90%;
 }
 
-.spreadsheet-cell input {
+#login-box h2 {
+    margin-bottom: 1rem;
+}
+
+#login-box label {
+    display: block;
+    margin-top: 0.75rem;
+}
+
+#login-box input {
     width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+#login-box button {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.75rem;
     border: none;
-    background: transparent;
-    color: inherit;
-    font-size: inherit;
-    outline: none;
-    padding: 0;
+    border-radius: 4px;
+    background-color: #0077cc;
+    color: #fff;
+    cursor: pointer;
 }
 
-/* Animations */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+#login-box button:hover {
+    background-color: #005fa3;
 }
 
-.animate-fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
+.error-message {
+    color: #c0392b;
+    margin-top: 0.5rem;
 }
 
-/* Form Focus States */
-input:focus, textarea:focus, select:focus {
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+/* Views */
+.view {
+    display: block;
 }
 
-/* Table Hover Effects */
-tbody tr:hover td {
-    background-color: rgba(59, 130, 246, 0.05);
+.view.hidden {
+    display: none;
 }
 
-/* Button Transitions */
+/* Cards */
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.dark-mode .card {
+    background-color: #1e1e1e;
+    box-shadow: none;
+}
+
+/* Forms */
+label {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="time"] {
+    width: 100%;
+    padding: 0.4rem;
+    margin-top: 0.25rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.dark-mode input[type="text"],
+.dark-mode input[type="number"],
+.dark-mode input[type="date"],
+.dark-mode input[type="time"] {
+    background-color: #222;
+    border-color: #444;
+    color: #eee;
+}
+
+/* Buttons */
 button {
-    transition: all 0.2s ease;
+    font-size: 0.9rem;
 }
 
-button:active {
-    transform: scale(0.98);
+.button-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
 }
 
-/* Toast Animation */
-.toast-show {
-    transform: translateY(0) !important;
-    opacity: 1 !important;
+.button-row button {
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    border: none;
+    background-color: #0077cc;
+    color: #fff;
+    cursor: pointer;
 }
 
-/* Sidebar Active State */
-.nav-item.active {
-    background-color: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-    border-right: 3px solid #3b82f6;
+.button-row button:hover {
+    background-color: #005fa3;
 }
 
-/* Loading State */
-.loading {
-    position: relative;
-    pointer-events: none;
+/* Tables */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 0.5rem;
 }
 
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin: -10px 0 0 -10px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+th, td {
+    border: 1px solid #ddd;
+    padding: 0.4rem 0.5rem;
+    text-align: left;
 }
 
-/* Print Styles for Trip Sheets */
-@media print {
-    #sidebar, header, .no-print {
-        display: none !important;
+th {
+    background-color: #f0f0f0;
+}
+
+.dark-mode th {
+    background-color: #2a2a2a;
+}
+
+tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.dark-mode tr:nth-child(even) {
+    background-color: #1a1a1a;
+}
+
+/* Summary rows */
+.summary-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.summary-row > div {
+    min-width: 150px;
+}
+
+/* Status messages */
+.status-message {
+    margin-top: 0.75rem;
+}
+
+/* Header user info */
+#user-info {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Dark mode toggle */
+#darkModeToggle {
+    padding: 0.4rem 0.75rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.dark-mode #darkModeToggle {
+    background-color: #333;
+    border-color: #555;
+    color: #eee;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #app-container {
+        flex-direction: column;
     }
-    
-    #appContainer {
-        display: block !important;
+
+    #sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
     }
-    
-    .view-section {
-        display: block !important;
+
+    #sidebar nav {
+        flex-direction: row;
+        flex-wrap: wrap;
     }
-    
-    body {
-        background: white;
-        color: black;
+
+    .nav-btn {
+        flex: 1 0 50%;
     }
-    
-    .bg-slate-800 {
-        background: white !important;
-        border: 1px solid #ccc !important;
+
+    #main {
+        height: calc(100vh - 60px);
     }
-}
+    }
