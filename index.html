@@ -29,13 +29,28 @@
             <div class="sidebar-header">
                 <h2>Ryano Portal</h2>
             </div>
-            <nav>
-                <button class="nav-btn active" data-view="dashboard">Dashboard</button>
-                <button class="nav-btn" data-view="trip-sheet">Trip Sheet</button>
-                <button class="nav-btn" data-view="database">Database</button>
-                <button class="nav-btn" data-view="spreadsheet">Spreadsheet</button>
-                <button class="nav-btn" id="logoutButton">Logout</button>
-            </nav>
+            <nav class="navbar">
+    <div class="nav-left">
+        <span class="nav-title">Ryano Portal</span>
+    </div>
+
+    <div class="nav-right">
+        <button id="hamburgerBtn" class="hamburger-btn">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- FULLSCREEN OVERLAY MENU -->
+<div id="overlayMenu" class="overlay-menu">
+    <div class="overlay-content">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="trip.html">Trip Sheet</a>
+        <a href="database.html">Database</a>
+        <a href="spreadsheet.html">Spreadsheet</a>
+        <a href="#" id="logoutBtnOverlay">Logout</a>
+    </div>
+</div>
         </aside>
 
         <!-- Main Content -->
