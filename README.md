@@ -1,8 +1,8 @@
 ---
-title: FleetFlow Navigator 🚛
+title: Ryano Portal
 colorFrom: blue
 colorTo: red
-emoji: 🐳
+emoji: 🦏
 sdk: static
 pinned: false
 tags:
