@@ -1,5 +1,5 @@
 // URL of your deployed Apps Script Web App (no credentials here)
-const SHEETS_WEB_APP_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwlmH1fjP5Iyjr2kZedrDYGZ6ySaJqEFWdlCsq-Etf2YRWuWBZUfxFIrrofHn_eJQWH/exec";
 
 // Append a trip to Google Sheets
 async function appendTripToSheet(tripData) {
