@@ -72,6 +72,12 @@ logoutButton.addEventListener("click", () => {
     passwordInput.value = "";
     userRoleLabel.textContent = "";
     userIdLabel.textContent = "";
+
+    // Reset nav state
+    navButtons.forEach(b => b.classList.remove("active"));
+    const dashBtn = document.querySelector('.nav-btn[data-view="dashboard"]');
+    if (dashBtn) dashBtn.classList.add("active");
+    showView("dashboard");
 });
 
 // --- Role-based UI ---
@@ -87,8 +93,8 @@ function applyRoleUI() {
         if (dbBtn) dbBtn.style.display = "none";
         if (sheetBtn) sheetBtn.style.display = "none";
     } else {
-        if (dbBtn) dbBtn.style.display = "block";
-        if (sheetBtn) sheetBtn.style.display = "block";
+        if (dbBtn) dbBtn.style.display = "inline-block";
+        if (sheetBtn) sheetBtn.style.display = "inline-block";
     }
 }
 
@@ -120,7 +126,6 @@ function showView(viewName) {
 darkModeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
 });
-
 
 // ======================================================
 // === NEW STOP SYSTEM (FULL REPLACEMENT) ===============
@@ -193,7 +198,6 @@ function collectStops() {
     return stops;
 }
 
-
 // ======================================================
 // === TRIP SUBMIT ======================================
 // ======================================================
@@ -218,53 +222,17 @@ tripForm.addEventListener("submit", async (e) => {
         tripMessage.textContent = "Please fill in all required fields.";
         return;
     }
+
     // --- Basic Odometer Validation ---
-if (isNaN(startOdometer) || isNaN(endOdometer)) {
-    tripMessage.textContent = "Odometer values must be numbers.";
-    return;
-}
+    if (isNaN(startOdometer) || isNaN(endOdometer)) {
+        tripMessage.textContent = "Odometer values must be numbers.";
+        return;
+    }
 
-if (endOdometer < startOdometer) {
-    tripMessage.textContent = "End odometer cannot be less than start odometer.";
-    return;
-}
-    // --- Basic Time Format Validation ---
-function isValidTimeRange(str) {
-    // Must contain a dash
-    if (!str.includes("-")) return false;
-
-    const [start, end] = str.split("-");
-
-    // Must be 4 digits each
-    if (start.length !== 4 || end.length !== 4) return false;
-
-    // Must be numbers
-    if (isNaN(start) || isNaN(end)) return false;
-
-    // Convert to minutes for comparison
-    const startMin = parseInt(start.slice(0, 2)) * 60 + parseInt(start.slice(2));
-    const endMin = parseInt(end.slice(0, 2)) * 60 + parseInt(end.slice(2));
-
-    // Hours must be valid
-    if (parseInt(start.slice(0, 2)) > 23 || parseInt(end.slice(0, 2)) > 23) return false;
-
-    // Minutes must be valid
-    if (parseInt(start.slice(2)) > 59 || parseInt(end.slice(2)) > 59) return false;
-
-    // End must be after start
-    return endMin >= startMin;
-}
-
-// Validate startTime and endTime
-if (!isValidTimeRange(startTime)) {
-    tripMessage.textContent = "Start time must be in HHMM-HHMM format.";
-    return;
-}
-
-if (!isValidTimeRange(endTime)) {
-    tripMessage.textContent = "End time must be in HHMM-HHMM format.";
-    return;
-}
+    if (endOdometer < startOdometer) {
+        tripMessage.textContent = "End odometer cannot be less than start odometer.";
+        return;
+    }
 
     const stops = collectStops();
     const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
@@ -302,7 +270,6 @@ if (!isValidTimeRange(endTime)) {
         tripMessage.textContent = "Error submitting trip.";
     }
 });
-
 
 // ======================================================
 // === DRIVER DASHBOARD =================================
