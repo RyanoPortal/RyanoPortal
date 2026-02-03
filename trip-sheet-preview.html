@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trip Sheet</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #fff;
+      color: #000;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 4px 6px;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f0f0;
+      text-align: left;
+    }
+    .no-border td, .no-border th {
+      border: none;
+    }
+    .notes-box {
+      height: 120px;
+    }
+    .small-text {
+      font-size: 11px;
+    }
+    .section-title {
+      font-weight: bold;
+      margin: 8px 0 4px;
+    }
+    #controls {
+      margin-bottom: 10px;
+      text-align: right;
+    }
+    #controls button {
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <button onclick="window.history.back()">Back</button>
+  </div>
+
+  <h1>Trip Sheet</h1>
+
+  <!-- Driver section -->
+  <table>
+    <tr>
+      <th>Driver Name</th>
+      <th>TRIP DATE</th>
+      <th>TRIP TYPE</th>
+      <th>VAN ID</th>
+    </tr>
+    <tr>
+      <td id="driverNameCell"></td>
+      <td id="tripDateCell"></td>
+      <td id="tripTypeCell"></td>
+      <td id="vanIdCell"></td>
+    </tr>
+  </table>
+
+  <!-- RR / Hallcon -->
+  <table>
+    <tr>
+      <th>RR #</th>
+      <th>Hallcon #</th>
+    </tr>
+    <tr>
+      <td id="rrNumberCell"></td>
+      <td id="hallconNumberCell"></td>
+    </tr>
+  </table>
+
+  <!-- Crew / Destination / Disp -->
+  <table>
+    <tr>
+      <th>Name(s)</th>
+      <th>To?</th>
+      <th>Disp #</th>
+    </tr>
+    <tr>
+      <td id="crewNamesCell"></td>
+      <td id="destinationCell"></td>
+      <td id="dispatcherNumberCell"></td>
+    </tr>
+  </table>
+
+  <div class="section-title">STOPS WITH CREW</div>
+
+  <table id="stopsTable">
+    <tr>
+      <th>#</th>
+      <th>TIMES</th>
+      <th>LOCATION</th>
+      <th>ODOMETER</th>
+      <th>WHY ?</th>
+      <th>MINS</th>
+    </tr>
+    <!-- rows injected by JS -->
+  </table>
+
+  <div class="section-title">NOTES / APPROVALS</div>
+  <table>
+    <tr>
+      <td class="notes-box" id="notesCell"></td>
+    </tr>
+  </table>
+
+  <table>
+    <tr>
+      <th colspan="2">DROP CREW TIME</th>
+      <th>DROP CREW ODOMETER</th>
+    </tr>
+    <tr>
+      <td colspan="2" id="dropCrewTimeCell"></td>
+      <td id="dropCrewOdometerCell"></td>
+    </tr>
+    <tr>
+      <th colspan="2">TOTAL WAIT</th>
+      <th>TOTAL MILES</th>
+    </tr>
+    <tr>
+      <td colspan="2" id="totalWaitCell"></td>
+      <td id="totalMilesCell"></td>
+    </tr>
+    <tr>
+      <td colspan="2"></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td colspan="2"><strong>Clock In (Van PU Time)</strong></td>
+      <td><strong>Clock Out (Van DO Time)</strong></td>
+    </tr>
+    <tr>
+      <td id="clockInCell"></td>
+      <td></td>
+      <td id="clockOutCell"></td>
+    </tr>
+  </table>
+
+  <script>
+    function loadTrip() {
+      const raw = localStorage.getItem('lastTrip');
+      if (!raw) return;
+      const trip = JSON.parse(raw);
+
+      document.getElementById('driverNameCell').textContent = trip.driverName || '';
+      document.getElementById('tripDateCell').textContent = trip.tripDate || '';
+      document.getElementById('tripTypeCell').textContent = trip.tripType || '';
+      document.getElementById('vanIdCell').textContent = trip.vanId || '';
+
+      document.getElementById('rrNumberCell').textContent = trip.rrNumber || '';
+      document.getElementById('hallconNumberCell').textContent = trip.hallconNumber || '';
+
+      document.getElementById('crewNamesCell').textContent = trip.crewNames || '';
+      document.getElementById('destinationCell').textContent = trip.destination || '';
+      document.getElementById('dispatcherNumberCell').textContent = trip.dispatcherNumber || '';
+
+      const stopsTable = document.getElementById('stopsTable');
+      if (Array.isArray(trip.stops)) {
+        trip.stops.forEach((s, i) => {
+          const tr = document.createElement('tr');
+
+          const tdIndex = document.createElement('td');
+          tdIndex.textContent = s.index || i + 1;
+
+          const tdTimes = document.createElement('td');
+          tdTimes.textContent = s.times || '';
+
+          const tdLoc = document.createElement('td');
+          tdLoc.textContent = s.location || '';
+
+          const tdOdo = document.createElement('td');
+          tdOdo.textContent = s.odometer || '';
+
+          const tdWhy = document.createElement('td');
+          tdWhy.textContent = s.why || '';
+
+          const tdMins = document.createElement('td');
+          tdMins.textContent = s.mins !== undefined ? s.mins : '';
+
+          tr.appendChild(tdIndex);
+          tr.appendChild(tdTimes);
+          tr.appendChild(tdLoc);
+          tr.appendChild(tdOdo);
+          tr.appendChild(tdWhy);
+          tr.appendChild(tdMins);
+
+          stopsTable.appendChild(tr);
+        });
+      }
+
+      document.getElementById('notesCell').textContent = trip.notes || '';
+
+      document.getElementById('dropCrewTimeCell').textContent = trip.dropCrewTime || '';
+      document.getElementById('dropCrewOdometerCell').textContent = trip.endOdometer || '';
+      document.getElementById('totalWaitCell').textContent = trip.totalWait || '';
+      document.getElementById('totalMilesCell').textContent = trip.totalMiles || '';
+
+      document.getElementById('clockInCell').textContent = trip.clockIn || '';
+      document.getElementById('clockOutCell').textContent = trip.clockOut || '';
+    }
+
+    loadTrip();
+  </script>
+</body>
+</html>
