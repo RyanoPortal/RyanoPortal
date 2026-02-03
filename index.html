@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
 </head>
-<body class="light-mode">
+<body>
     <!-- Login Overlay -->
     <div id="login-overlay">
         <div id="login-box">
@@ -24,35 +24,6 @@
 
     <!-- App Shell -->
     <div id="app-container">
-        <!-- Sidebar -->
-        <aside id="sidebar">
-            <div class="sidebar-header">
-                <h2>Ryano Portal</h2>
-            </div>
-            <nav class="navbar">
-    <div class="nav-left">
-        <span class="nav-title">Ryano Portal</span>
-    </div>
-
-    <div class="nav-right">
-        <button id="hamburgerBtn" class="hamburger-btn">
-            <span></span><span></span><span></span>
-        </button>
-    </div>
-</nav>
-
-<!-- FULLSCREEN OVERLAY MENU -->
-<div id="overlayMenu" class="overlay-menu">
-    <div class="overlay-content">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="trip.html">Trip Sheet</a>
-        <a href="database.html">Database</a>
-        <a href="spreadsheet.html">Spreadsheet</a>
-        <a href="#" id="logoutBtnOverlay">Logout</a>
-    </div>
-</div>
-        </aside>
-
         <!-- Main Content -->
         <div id="main">
             <!-- Header -->
@@ -61,8 +32,19 @@
                     <span id="userRoleLabel"></span>
                     <span id="userIdLabel"></span>
                 </div>
-                <button id="darkModeToggle">Toggle Dark Mode</button>
+                <div class="header-right">
+                    <button id="darkModeToggle">Toggle Dark Mode</button>
+                </div>
             </header>
+
+            <!-- Top Nav -->
+            <nav id="top-nav">
+                <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+                <button class="nav-btn" data-view="trip-sheet">Trip Sheet</button>
+                <button class="nav-btn" data-view="database">Database</button>
+                <button class="nav-btn" data-view="spreadsheet">Spreadsheet</button>
+                <button class="nav-btn" id="logoutButton">Logout</button>
+            </nav>
 
             <!-- Views -->
             <main id="content">
@@ -142,42 +124,43 @@
                         </section>
 
                         <section class="card">
-    <h2>Stops</h2>
-    <div class="table-container">
-        <table id="stopsTable">
-            <thead>
-                <tr>
-                    <th>Stop #</th>
-                    <th>Times</th>
-                    <th>Location</th>
-                    <th>Odometer</th>
-                    <th>Why?</th>
-                    <th>Wait</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="stop-number">1</td>
-                    <td><input type="text" class="stop-times" placeholder="HHMM-HHMM"></td>
-                    <td><input type="text" class="stop-location"></td>
-                    <td><input type="text" class="stop-odometer"></td>
-                    <td><input type="text" class="stop-why" maxlength="4"></td>
-                    <td><input type="number" class="stop-wait" value="0"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                            <h2>Stops</h2>
+                            <div class="table-container">
+                                <table id="stopsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Stop #</th>
+                                            <th>Times</th>
+                                            <th>Location</th>
+                                            <th>Odometer</th>
+                                            <th>Why?</th>
+                                            <th>Wait</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="stop-number">1</td>
+                                            <td><input type="text" class="stop-times" placeholder="HHMM-HHMM"></td>
+                                            <td><input type="text" class="stop-location"></td>
+                                            <td><input type="text" class="stop-odometer"></td>
+                                            <td><input type="text" class="stop-why" maxlength="4"></td>
+                                            <td><input type="number" class="stop-wait" value="0"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-    <div class="stop-buttons">
-        <button type="button" id="addStopRow">Add Stop</button>
-        <button type="button" id="removeStopRow">Remove Stop</button>
-    </div>
+                            <div class="stop-buttons">
+                                <button type="button" id="addStopRow">Add Stop</button>
+                                <button type="button" id="removeStopRow">Remove Stop</button>
+                            </div>
 
-    <div class="totals">
-        <p>Total Wait: <span id="totalWait">0</span> minutes</p>
-        <p>Total Miles: <span id="totalMiles">0</span></p>
-    </div>
-</section>
+                            <div class="totals">
+                                <p>Total Wait: <span id="totalWait">0</span> minutes</p>
+                                <p>Total Miles: <span id="totalMiles">0</span></p>
+                            </div>
+                        </section>
+
                         <section class="card">
                             <h2>End of Trip</h2>
                             <label for="endOdometer">End Odometer</label>
