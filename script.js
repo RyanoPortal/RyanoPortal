@@ -200,7 +200,7 @@ stopsTableBody.addEventListener("input", e => {
 function collectStops() {
     const stops = [];
 
-    document.querySelectorAll("#stopsTable tbody tr").forEach(row => {
+    document.querySelectorAll("#stopsTable tbody tr").forEach((row, index) => {
         const times = row.querySelector(".stop-times").value.trim();
         const location = row.querySelector(".stop-location").value.trim();
         const odometer = row.querySelector(".stop-odometer").value.trim();
@@ -208,7 +208,7 @@ function collectStops() {
         const wait = parseFloat(row.querySelector(".stop-wait").value) || 0;
 
         if (times || location || odometer || why || wait > 0) {
-            stops.push({ times, location, odometer, why, wait });
+            stops.push({ index: index + 1, times, location, odometer, why, wait });
         }
     });
 
@@ -234,7 +234,7 @@ async function appendTripToSheet(trip) {
 }
 
 // ======================================================
-// === TRIP SUBMIT (UPDATED TO MATCH YOUR HTML) =========
+// === TRIP SUBMIT (MATCHES UPDATED HTML) ===============
 // ======================================================
 
 tripForm.addEventListener("submit", async (e) => {
@@ -273,7 +273,7 @@ tripForm.addEventListener("submit", async (e) => {
     const totalMiles = parseFloat(totalMilesSpan.textContent) || 0;
     const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
 
-    // BASIC REQUIRED FIELD CHECKS (you can tighten later if you want)
+    // BASIC REQUIRED FIELD CHECKS
     if (!driverName || !tripdate || !vanID) {
         tripMessage.textContent = "Please fill in Driver Name, Trip Date, and Van ID.";
         tripMessage.style.color = "red";
@@ -340,8 +340,6 @@ tripForm.addEventListener("submit", async (e) => {
             tripForm.reset();
             totalMilesSpan.textContent = "0";
             totalWaitSpan.textContent = "0";
-
-            // Recalculate in case default row remains
             updateTotals();
         } else {
             tripMessage.textContent = "Trip submission failed.";
@@ -355,7 +353,7 @@ tripForm.addEventListener("submit", async (e) => {
 });
 
 // ======================================================
-// === DRIVER DASHBOARD (UNCHANGED STRUCTURE) ===========
+// === DRIVER DASHBOARD =================================
 // ======================================================
 
 loadDriverTripsBtn.addEventListener("click", async () => {
@@ -384,15 +382,15 @@ loadDriverTripsBtn.addEventListener("click", async () => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${trip.tripDate || ""}</td>
-            <td>${trip.startTime || ""}</td>
-            <td>${trip.endTime || ""}</td>
+            <td>${trip.clockIn || ""}</td>
+            <td>${trip.clockOut || ""}</td>
             <td>${trip.totalMiles || 0}</td>
             <td>${trip.totalWait || 0}</td>
         `;
         driverTripsBody.appendChild(row);
 
-        if (trip.startTime && trip.endTime) {
-            const h = estimateHours(trip.tripDate, trip.startTime, trip.endTime);
+        if (trip.clockIn && trip.clockOut) {
+            const h = estimateHours(trip.tripDate, trip.clockIn, trip.clockOut);
             totalHours += h;
         }
     });
@@ -416,6 +414,6 @@ function estimateHours(dateStr, startTime, endTime) {
 // ======================================================
 // === NOTE: fetchTripsForDriver ========================
 // ======================================================
-// This is assumed to be defined in your sheets.js or another file,
-// same as before. If you want this moved into here too, we can
-// wire it up to the same SHEETS_WEB_APP_URL.
+// This is implemented in your Apps Script backend and
+// called via another file (sheets.js) or similar.
+// The structure above matches what the backend returns.
