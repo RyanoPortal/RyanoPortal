@@ -219,7 +219,7 @@ function collectStops() {
 // === GOOGLE SHEETS WEB APP URL ========================
 // ======================================================
 
-const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz4MnHKkItbVnDwX7RxuSL0X4ydek1GMvQgjxRI3hPjeJhXxg41OmaXjPwZfNtpHPbN/exec";
+const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3pE3lBPm6QH7trkfLLOwz0HtJz6c-7wK1mpVrL04LB8Zi9IR_CymsCYmtQwqAdfAu/exec";
 
 // Helper to send trip to Google Sheets
 async function appendTripToSheet(trip) {
