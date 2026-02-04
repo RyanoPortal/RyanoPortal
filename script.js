@@ -1,4 +1,7 @@
-// --- Simple auth model for now ---
+// ======================================================
+// === SIMPLE AUTH MODEL ================================
+// ======================================================
+
 const users = [
     { id: "driver1", password: "1234", role: "driver" },
     { id: "Mike Mike", password: "2024", role: "driver" },
@@ -9,7 +12,10 @@ const users = [
 
 let currentUser = null;
 
-// --- DOM references ---
+// ======================================================
+// === DOM REFERENCES ===================================
+// ======================================================
+
 const loginOverlay = document.getElementById("login-overlay");
 const loginButton = document.getElementById("loginButton");
 const logoutButton = document.getElementById("logoutButton");
@@ -43,7 +49,10 @@ const driverTripsBody = document.getElementById("driverTripsBody");
 const driverTotalTripsSpan = document.getElementById("driverTotalTrips");
 const driverTotalHoursSpan = document.getElementById("driverTotalHours");
 
-// --- Login logic ---
+// ======================================================
+// === LOGIN LOGIC ======================================
+// ======================================================
+
 loginButton.addEventListener("click", () => {
     const id = employeeIdInput.value.trim();
     const pw = passwordInput.value.trim();
@@ -73,14 +82,16 @@ logoutButton.addEventListener("click", () => {
     userRoleLabel.textContent = "";
     userIdLabel.textContent = "";
 
-    // Reset nav state
     navButtons.forEach(b => b.classList.remove("active"));
     const dashBtn = document.querySelector('.nav-btn[data-view="dashboard"]');
     if (dashBtn) dashBtn.classList.add("active");
     showView("dashboard");
 });
 
-// --- Role-based UI ---
+// ======================================================
+// === ROLE-BASED UI ====================================
+// ======================================================
+
 function applyRoleUI() {
     if (!currentUser) return;
 
@@ -98,7 +109,10 @@ function applyRoleUI() {
     }
 }
 
-// --- Navigation ---
+// ======================================================
+// === NAVIGATION =======================================
+// ======================================================
+
 navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         const view = btn.getAttribute("data-view");
@@ -122,13 +136,16 @@ function showView(viewName) {
     if (target) target.classList.remove("hidden");
 }
 
-// --- Dark mode ---
+// ======================================================
+// === DARK MODE ========================================
+// ======================================================
+
 darkModeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
 });
 
 // ======================================================
-// === NEW STOP SYSTEM (FULL REPLACEMENT) ===============
+// === STOP SYSTEM ======================================
 // ======================================================
 
 // Add Stop Row
@@ -165,13 +182,13 @@ function updateTotals() {
     totalWaitSpan.textContent = totalWait.toString();
 
     const startOdometer = parseFloat(document.getElementById("startOdometer").value) || 0;
-    const endOdometer = parseFloat(document.getElementById("endOdometer").value) || 0;
-    const miles = endOdometer - startOdometer;
+    const dropcrewOdometer = parseFloat(document.getElementById("dropcrewOdometer").value) || 0;
+    const miles = dropcrewOdometer - startOdometer;
     totalMilesSpan.textContent = miles > 0 ? miles.toString() : "0";
 }
 
 document.getElementById("startOdometer").addEventListener("input", updateTotals);
-document.getElementById("endOdometer").addEventListener("input", updateTotals);
+document.getElementById("dropcrewOdometer").addEventListener("input", updateTotals);
 
 stopsTableBody.addEventListener("input", e => {
     if (e.target.classList.contains("stop-wait")) {
@@ -179,7 +196,7 @@ stopsTableBody.addEventListener("input", e => {
     }
 });
 
-// Collect Stops
+// Collect Stops (matches your HTML classes exactly)
 function collectStops() {
     const stops = [];
 
@@ -199,80 +216,146 @@ function collectStops() {
 }
 
 // ======================================================
-// === TRIP SUBMIT ======================================
+// === GOOGLE SHEETS WEB APP URL ========================
+// ======================================================
+
+const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3hmiRVoXkd2SSBKUO9g890cpWtK_RLdGMIcGlfycHsiE4f7tMZRg2fbPVOFjaeerz/exec";
+
+// Helper to send trip to Google Sheets
+async function appendTripToSheet(trip) {
+    const response = await fetch(SHEETS_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "appendTrip", trip })
+    });
+
+    const result = await response.json();
+    return !!result.success;
+}
+
+// ======================================================
+// === TRIP SUBMIT (UPDATED TO MATCH YOUR HTML) =========
 // ======================================================
 
 tripForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+
     if (!currentUser) {
         tripMessage.textContent = "You must be logged in.";
+        tripMessage.style.color = "red";
         return;
     }
 
+    // DRIVER INFO (IDs match your HTML)
     const driverName = document.getElementById("driverName").value.trim();
-    const vehicleNumber = document.getElementById("vehicleNumber").value.trim();
+    const tripdate = document.getElementById("tripdate").value.trim();
+    const vanID = document.getElementById("vanID").value.trim();
     const startOdometer = parseFloat(document.getElementById("startOdometer").value) || 0;
+
+    // CREW INFO
+    const rrNumber = document.getElementById("rrNumber").value.trim();
+    const hallconNumber = document.getElementById("hallconNumber").value.trim();
+    const tripType = document.getElementById("tripType").value.trim();
     const crewNames = document.getElementById("crewNames").value.trim();
-    const endOdometer = parseFloat(document.getElementById("endOdometer").value) || 0;
-    const tripDate = document.getElementById("tripDate").value;
-    const startTime = document.getElementById("startTime").value;
-    const endTime = document.getElementById("endTime").value;
+    const destination = document.getElementById("destination").value.trim();
+    const dispatcher = document.getElementById("dispatcher").value.trim();
 
-    if (!driverName || !vehicleNumber || !tripDate || !startTime || !endTime) {
-        tripMessage.textContent = "Please fill in all required fields.";
-        return;
-    }
+    // NOTES
+    const notes = document.getElementById("notes").value.trim();
 
-    // --- Basic Odometer Validation ---
-    if (isNaN(startOdometer) || isNaN(endOdometer)) {
-        tripMessage.textContent = "Odometer values must be numbers.";
-        return;
-    }
+    // END OF TRIP
+    const dropcrewOdometer = parseFloat(document.getElementById("dropcrewOdometer").value) || 0;
+    const dropcrewTime = document.getElementById("dropcrewTime").value.trim();
+    const clockIn = document.getElementById("clockIn").value.trim();
+    const clockOut = document.getElementById("clockOut").value.trim();
 
-    if (endOdometer < startOdometer) {
-        tripMessage.textContent = "End odometer cannot be less than start odometer.";
-        return;
-    }
-
-    const stops = collectStops();
-    const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
+    // AUTO TOTALS (from spans)
     const totalMiles = parseFloat(totalMilesSpan.textContent) || 0;
+    const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
 
+    // BASIC REQUIRED FIELD CHECKS (you can tighten later if you want)
+    if (!driverName || !tripdate || !vanID) {
+        tripMessage.textContent = "Please fill in Driver Name, Trip Date, and Van ID.";
+        tripMessage.style.color = "red";
+        return;
+    }
+
+    // ODOMETER VALIDATION
+    if (isNaN(startOdometer) || isNaN(dropcrewOdometer)) {
+        tripMessage.textContent = "Odometer values must be numbers.";
+        tripMessage.style.color = "red";
+        return;
+    }
+
+    if (dropcrewOdometer < startOdometer) {
+        tripMessage.textContent = "Drop Crew Odometer cannot be less than Start Odometer.";
+        tripMessage.style.color = "red";
+        return;
+    }
+
+    // STOPS
+    const stops = collectStops();
+
+    // BUILD TRIP OBJECT (backend-friendly)
     const trip = {
         driverId: currentUser.id,
         role: currentUser.role,
-        driverName,
-        vehicleNumber,
-        crewNames,
-        startOdometer,
-        endOdometer,
-        tripDate,
-        startTime,
-        endTime,
-        totalWait,
-        totalMiles,
-        stops,
+
+        driverName: driverName,
+        tripDate: tripdate,
+        tripType: tripType,
+        vanId: vanID,
+
+        rrNumber: rrNumber,
+        hallconNumber: hallconNumber,
+        crewNames: crewNames,
+        destination: destination,
+        dispatcherNumber: dispatcher,
+
+        startOdometer: startOdometer,
+        endOdometer: dropcrewOdometer,
+        totalMiles: totalMiles,
+        totalWait: totalWait,
+
+        dropCrewTime: dropcrewTime,
+        clockIn: clockIn,
+        clockOut: clockOut,
+
+        stops: stops,
+        notes: notes,
+
         submittedAt: new Date().toISOString()
     };
 
     tripMessage.textContent = "Submitting trip...";
+    tripMessage.style.color = "yellow";
+
     try {
         const ok = await appendTripToSheet(trip);
         if (ok) {
             tripMessage.textContent = "Trip submitted successfully.";
+            tripMessage.style.color = "lime";
+
+            // Reset form and totals
             tripForm.reset();
             totalMilesSpan.textContent = "0";
             totalWaitSpan.textContent = "0";
+
+            // Recalculate in case default row remains
+            updateTotals();
         } else {
             tripMessage.textContent = "Trip submission failed.";
+            tripMessage.style.color = "red";
         }
     } catch (err) {
+        console.error(err);
         tripMessage.textContent = "Error submitting trip.";
+        tripMessage.style.color = "red";
     }
 });
 
 // ======================================================
-// === DRIVER DASHBOARD =================================
+// === DRIVER DASHBOARD (UNCHANGED STRUCTURE) ===========
 // ======================================================
 
 loadDriverTripsBtn.addEventListener("click", async () => {
@@ -329,3 +412,10 @@ function estimateHours(dateStr, startTime, endTime) {
         return 0;
     }
 }
+
+// ======================================================
+// === NOTE: fetchTripsForDriver ========================
+// ======================================================
+// This is assumed to be defined in your sheets.js or another file,
+// same as before. If you want this moved into here too, we can
+// wire it up to the same SHEETS_WEB_APP_URL.
