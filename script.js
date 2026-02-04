@@ -148,7 +148,6 @@ darkModeToggle.addEventListener("click", () => {
 // === STOP SYSTEM ======================================
 // ======================================================
 
-// Add Stop Row
 addStopRowBtn.addEventListener("click", () => {
     const lastRow = stopsTableBody.lastElementChild;
     const newRow = lastRow.cloneNode(true);
@@ -165,7 +164,6 @@ addStopRowBtn.addEventListener("click", () => {
     stopsTableBody.appendChild(newRow);
 });
 
-// Remove Stop Row
 removeStopRowBtn.addEventListener("click", () => {
     if (stopsTableBody.children.length > 1) {
         stopsTableBody.removeChild(stopsTableBody.lastElementChild);
@@ -173,7 +171,6 @@ removeStopRowBtn.addEventListener("click", () => {
     updateTotals();
 });
 
-// Totals
 function updateTotals() {
     let totalWait = 0;
     document.querySelectorAll(".stop-wait").forEach(input => {
@@ -196,7 +193,6 @@ stopsTableBody.addEventListener("input", e => {
     }
 });
 
-// Collect Stops (matches your HTML classes exactly)
 function collectStops() {
     const stops = [];
 
@@ -221,11 +217,14 @@ function collectStops() {
 
 const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3pE3lBPm6QH7trkfLLOwz0HtJz6c-7wK1mpVrL04LB8Zi9IR_CymsCYmtQwqAdfAu/exec";
 
-// Helper to send trip to Google Sheets
+// ======================================================
+// === CORS-SAFE FETCH LAYER =============================
+// ======================================================
+
 async function appendTripToSheet(trip) {
     const response = await fetch(SHEETS_WEB_APP_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify({ mode: "appendTrip", trip })
     });
 
@@ -233,8 +232,24 @@ async function appendTripToSheet(trip) {
     return !!result.success;
 }
 
+async function fetchTripsForDriver(driverId, startDate, endDate) {
+    const response = await fetch(SHEETS_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            mode: "fetchDriverTrips",
+            driverId,
+            startDate,
+            endDate
+        })
+    });
+
+    const result = await response.json();
+    return result.trips || [];
+}
+
 // ======================================================
-// === TRIP SUBMIT (MATCHES UPDATED HTML) ===============
+// === TRIP SUBMIT ======================================
 // ======================================================
 
 tripForm.addEventListener("submit", async (e) => {
@@ -246,13 +261,11 @@ tripForm.addEventListener("submit", async (e) => {
         return;
     }
 
-    // DRIVER INFO (IDs match your HTML)
     const driverName = document.getElementById("driverName").value.trim();
     const tripdate = document.getElementById("tripdate").value.trim();
     const vanID = document.getElementById("vanID").value.trim();
     const startOdometer = parseFloat(document.getElementById("startOdometer").value) || 0;
 
-    // CREW INFO
     const rrNumber = document.getElementById("rrNumber").value.trim();
     const hallconNumber = document.getElementById("hallconNumber").value.trim();
     const tripType = document.getElementById("tripType").value.trim();
@@ -260,27 +273,22 @@ tripForm.addEventListener("submit", async (e) => {
     const destination = document.getElementById("destination").value.trim();
     const dispatcher = document.getElementById("dispatcher").value.trim();
 
-    // NOTES
     const notes = document.getElementById("notes").value.trim();
 
-    // END OF TRIP
     const dropcrewOdometer = parseFloat(document.getElementById("dropcrewOdometer").value) || 0;
     const dropcrewTime = document.getElementById("dropcrewTime").value.trim();
     const clockIn = document.getElementById("clockIn").value.trim();
     const clockOut = document.getElementById("clockOut").value.trim();
 
-    // AUTO TOTALS (from spans)
     const totalMiles = parseFloat(totalMilesSpan.textContent) || 0;
     const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
 
-    // BASIC REQUIRED FIELD CHECKS
     if (!driverName || !tripdate || !vanID) {
         tripMessage.textContent = "Please fill in Driver Name, Trip Date, and Van ID.";
         tripMessage.style.color = "red";
         return;
     }
 
-    // ODOMETER VALIDATION
     if (isNaN(startOdometer) || isNaN(dropcrewOdometer)) {
         tripMessage.textContent = "Odometer values must be numbers.";
         tripMessage.style.color = "red";
@@ -293,10 +301,8 @@ tripForm.addEventListener("submit", async (e) => {
         return;
     }
 
-    // STOPS
     const stops = collectStops();
 
-    // BUILD TRIP OBJECT (backend-friendly)
     const trip = {
         driverId: currentUser.id,
         role: currentUser.role,
@@ -336,7 +342,6 @@ tripForm.addEventListener("submit", async (e) => {
             tripMessage.textContent = "Trip submitted successfully.";
             tripMessage.style.color = "lime";
 
-            // Reset form and totals
             tripForm.reset();
             totalMilesSpan.textContent = "0";
             totalWaitSpan.textContent = "0";
@@ -410,10 +415,3 @@ function estimateHours(dateStr, startTime, endTime) {
         return 0;
     }
 }
-
-// ======================================================
-// === NOTE: fetchTripsForDriver ========================
-// ======================================================
-// This is implemented in your Apps Script backend and
-// called via another file (sheets.js) or similar.
-// The structure above matches what the backend returns.
