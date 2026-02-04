@@ -103,6 +103,223 @@
                 <!-- Trip Sheet View -->
                 <section class="view hidden" id="view-trip-sheet">
                     <h1>Trip Sheet</h1>
+<hr>
+                    <form id="tripForm">
+                        <section class="card">
+                            <h2>Driver Info</h2>
+                            <label for="driverName">Driver Name</label>
+                            <input type="text" id="driverName" required />
+<Br>
+                            <label for="tripdate">Trip Date</label>
+                            <input type="text" id="tripdate" required />
+<Br>
+                            <label for="vanId">Van ID</label>
+                            <input type="text" id="vanID" required />
+<Br>
+                            <label for="startOdometer">Start Odometer</label>
+                            <input type="number" id="startOdometer" required />
+                        </section>
+<hr>
+                        <section class="card">
+                            <h2>Crew Info</h2>
+                            <label for="rrNumber">RR #</label>
+                            <input type="text" id="rrNumber" />
+                            <Br>
+                            <label for="hallconNumber">Hallcon #</label>
+                            <input type="text" id="hallconNumber" />
+                            <Br>
+                            <label for="tripType">Trip Type</label>
+                            <input type="text" id="tripType" />
+                            <Br>
+                            <label for="crewNames">Crew Names</label>
+                            <input type="text" id="crewNames" />
+                            <Br>
+                            <label for="destination">Destination</label>
+                            <input type="text" id="destination" />
+                            <Br>
+                            <label for="dispatcher">Dispatcher #</label>
+                            <input type="text" id="dispatcher" />
+                            
+<hr>
+                        </section>
+
+                        <section class="card">
+                            <h2>Stops W/ Crew</h2>
+                            <div class="table-container">
+                                <table id="stopsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Stop #</th>
+                                            <th>Times</th>
+                                            <th>Location</th>
+                                            <th>Odometer</th>
+                                            <th>Why?</th>
+                                            <th>Wait</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="stop-number">1</td>
+                                            <td><input type="text" class="stop-times" placeholder="HHMM-HHMM"></td>
+                                            <td><input type="text" class="stop-location"></td>
+                                            <td><input type="text" class="stop-odometer"></td>
+                                            <td><input type="text" class="stop-why" maxlength="4"></td>
+                                            <td><input type="number" class="stop-wait" value="0"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="stop-buttons">
+                                <button type="button" id="addStopRow">Add Stop</button>
+                                <button type="button" id="removeStopRow">Remove Stop</button>
+                            </div>
+                            <Br>
+                        <h3>Notes/Approvals<h3>
+                        <textarea id="notes" name="notes" rows="auto" cols="auto" placeholder="Add Your Notes/Approvals Here..."></textarea>   
+                        </section>
+<hr>
+                        <section class="card">
+                            <h2>End of Trip</h2>
+                            <label for="dropcrewOdometer">Drop Crew Odometer</label>
+                            <input type="number" id="dropcrewOdometer" required />
+                            <Br>
+                            <label for="dropcrewTime">Drop Crew Time</label>
+                            <input type="text" id="dropcrewTime" required />
+                            
+                            <div class="summary-row">
+                                <div>
+                                    <strong>Total Miles:</strong>
+                                    <span id="totalMiles">0</span>
+                                </div>
+                                <div>
+                                    <strong>Total Wait:</strong>
+                                    <span id="totalWait">0</span>
+                                </div>
+                            </div>
+<hr>                            
+                            <label for="clockIn">Clock In (Van PU Time)</label>
+                            <input type="text" id="clockIn" required />
+<Br>
+                            <label for="clockOut">Clock Out (Van DO Time)</label>
+                            <input type="text" id="clockOut" required />
+<hr>
+                        </section>
+
+                        <div class="button-row">
+                            <button type="submit" id="submitTrip">Submit Trip</button>
+                        </div>
+                        <p id="tripMessage" class="status-message"></p>
+                    </form>
+                </section>
+
+                <!-- Database View (Manager Only) -->
+                <section class="view hidden" id="view-database">
+                    <h1>Database View</h1>
+                    <p>Manager-only trip database (to be expanded).</p>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Driver</th>
+                                    <th>Vehicle</th>
+                                    <th>Miles</th>
+                                    <th>Wait</th>
+                                </tr>
+                            </thead>
+                            <tbody id="databaseBody">
+                                <!-- Manager data goes here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Spreadsheet Workspace (Manager Only) -->
+                <section class="view hidden" id="view-spreadsheet">
+                    <h1>Spreadsheet Workspace</h1>
+                    <p>Manager-only spreadsheet-style interface (to be expanded).</p>
+                    <div id="spreadsheetContainer" class="card">
+                        <!-- Future grid goes here -->
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="sheets.js"></script>
+</body>
+</html>
+                </div>
+            </header>
+
+            <!-- Top Nav -->
+            <nav id="top-nav">
+                <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+                <button class="nav-btn" data-view="trip-sheet">Trip Sheet</button>
+                <button class="nav-btn" data-view="database">Database</button>
+                <button class="nav-btn" data-view="spreadsheet">Spreadsheet</button>
+                <button class="nav-btn" id="logoutButton">Logout</button>
+            </nav>
+
+            <!-- Views -->
+            <main id="content">
+                <!-- Dashboard View -->
+                <section class="view" id="view-dashboard">
+                    <h1>Dashboard</h1>
+
+                    <section id="driver-summary" class="card">
+                        <h2>My Trip Summary</h2>
+                        <div class="summary-row">
+                            <div>
+                                <label for="driverStartDate">Start Date</label>
+                                <input type="date" id="driverStartDate" />
+                            </div>
+                            <div>
+                                <label for="driverEndDate">End Date</label>
+                                <input type="date" id="driverEndDate" />
+                            </div>
+                            <div>
+                                <button id="loadDriverTrips">Load My Trips</button>
+                            </div>
+                        </div>
+                        <div class="summary-row">
+                            <div>
+                                <strong>Total Trips:</strong>
+                                <span id="driverTotalTrips">0</span>
+                            </div>
+                            <div>
+                                <strong>Total Hours (approx):</strong>
+                                <span id="driverTotalHours">0</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="driver-history" class="card">
+                        <h2>My Trip History</h2>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Start Time</th>
+                                        <th>End Time</th>
+                                        <th>Miles</th>
+                                        <th>Wait (min)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="driverTripsBody">
+                                    <!-- Filled by script.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </section>
+
+                <!-- Trip Sheet View -->
+                <section class="view hidden" id="view-trip-sheet">
+                    <h1>Trip Sheet</h1>
 
                     <form id="tripForm">
                         <section class="card">
