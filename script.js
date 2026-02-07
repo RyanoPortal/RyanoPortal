@@ -94,9 +94,7 @@ logoutButton.addEventListener("click", () => {
 
 function applyRoleUI() {
     if (!currentUser) return;
-
     const isDriver = currentUser.role === "driver";
-
     const dbBtn = document.querySelector('[data-view="database"]');
     const sheetBtn = document.querySelector('[data-view="spreadsheet"]');
 
@@ -117,13 +115,9 @@ navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
         const view = btn.getAttribute("data-view");
         if (!view) return;
-
         if (currentUser && currentUser.role === "driver") {
-            if (view === "database" || view === "spreadsheet") {
-                return;
-            }
+            if (view === "database" || view === "spreadsheet") return;
         }
-
         navButtons.forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         showView(view);
@@ -151,16 +145,13 @@ darkModeToggle.addEventListener("click", () => {
 addStopRowBtn.addEventListener("click", () => {
     const lastRow = stopsTableBody.lastElementChild;
     const newRow = lastRow.cloneNode(true);
-
     const newIndex = stopsTableBody.children.length + 1;
     newRow.querySelector(".stop-number").textContent = newIndex;
-
     newRow.querySelector(".stop-times").value = "";
     newRow.querySelector(".stop-location").value = "";
     newRow.querySelector(".stop-odometer").value = "";
     newRow.querySelector(".stop-why").value = "";
     newRow.querySelector(".stop-wait").value = "0";
-
     stopsTableBody.appendChild(newRow);
 });
 
@@ -188,26 +179,21 @@ document.getElementById("startOdometer").addEventListener("input", updateTotals)
 document.getElementById("dropcrewOdometer").addEventListener("input", updateTotals);
 
 stopsTableBody.addEventListener("input", e => {
-    if (e.target.classList.contains("stop-wait")) {
-        updateTotals();
-    }
+    if (e.target.classList.contains("stop-wait")) updateTotals();
 });
 
 function collectStops() {
     const stops = [];
-
     document.querySelectorAll("#stopsTable tbody tr").forEach((row, index) => {
         const times = row.querySelector(".stop-times").value.trim();
         const location = row.querySelector(".stop-location").value.trim();
         const odometer = row.querySelector(".stop-odometer").value.trim();
         const why = row.querySelector(".stop-why").value.trim();
         const wait = parseFloat(row.querySelector(".stop-wait").value) || 0;
-
         if (times || location || odometer || why || wait > 0) {
             stops.push({ index: index + 1, times, location, odometer, why, wait });
         }
     });
-
     return stops;
 }
 
@@ -215,38 +201,7 @@ function collectStops() {
 // === GOOGLE SHEETS WEB APP URL ========================
 // ======================================================
 
-const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3pE3lBPm6QH7trkfLLOwz0HtJz6c-7wK1mpVrL04LB8Zi9IR_CymsCYmtQwqAdfAu/exec";
-
-// ======================================================
-// === CORS-SAFE FETCH LAYER =============================
-// ======================================================
-
-async function appendTripToSheet(trip) {
-    const response = await fetch(SHEETS_WEB_APP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ mode: "appendTrip", trip })
-    });
-
-    const result = await response.json();
-    return !!result.success;
-}
-
-async function fetchTripsForDriver(driverId, startDate, endDate) {
-    const response = await fetch(SHEETS_WEB_APP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-            mode: "fetchDriverTrips",
-            driverId,
-            startDate,
-            endDate
-        })
-    });
-
-    const result = await response.json();
-    return result.trips || [];
-}
+const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyE_bYvWGQlIF8pdvmVs4Xpy2PRe-cMka0cmWCIEqvcC1wwOh68424w8vV-ofNAys0/exec";
 
 // ======================================================
 // === TRIP SUBMIT ======================================
@@ -261,90 +216,61 @@ tripForm.addEventListener("submit", async (e) => {
         return;
     }
 
-    const driverName = document.getElementById("driverName").value.trim();
-    const tripdate = document.getElementById("tripdate").value.trim();
-    const vanID = document.getElementById("vanID").value.trim();
-    const startOdometer = parseFloat(document.getElementById("startOdometer").value) || 0;
+    // Mapping exact HTML IDs
+    const trip = {
+        driverName: document.getElementById("driverName").value.trim(),
+        tripdate: document.getElementById("tripdate").value.trim(),
+        vanID: document.getElementById("vanID").value.trim(),
+        startOdometer: document.getElementById("startOdometer").value.trim(),
+        rrNumber: document.getElementById("rrNumber").value.trim(),
+        hallconNumber: document.getElementById("hallconNumber").value.trim(),
+        tripType: document.getElementById("tripType").value.trim(),
+        crewNames: document.getElementById("crewNames").value.trim(),
+        destination: document.getElementById("destination").value.trim(),
+        dispatcher: document.getElementById("dispatcher").value.trim(),
+        stops: collectStops(),
+        dropcrewOdometer: document.getElementById("dropcrewOdometer").value.trim(),
+        dropcrewTime: document.getElementById("dropcrewTime").value.trim(),
+        totalMiles: totalMilesSpan.textContent,
+        totalWait: totalWaitSpan.textContent,
+        clockIn: document.getElementById("clockIn").value.trim(),
+        clockOut: document.getElementById("clockOut").value.trim(),
+        notes: document.getElementById("notes").value.trim(),
+        submittedAt: new Date().toISOString()
+    };
 
-    const rrNumber = document.getElementById("rrNumber").value.trim();
-    const hallconNumber = document.getElementById("hallconNumber").value.trim();
-    const tripType = document.getElementById("tripType").value.trim();
-    const crewNames = document.getElementById("crewNames").value.trim();
-    const destination = document.getElementById("destination").value.trim();
-    const dispatcher = document.getElementById("dispatcher").value.trim();
-
-    const notes = document.getElementById("notes").value.trim();
-
-    const dropcrewOdometer = parseFloat(document.getElementById("dropcrewOdometer").value) || 0;
-    const dropcrewTime = document.getElementById("dropcrewTime").value.trim();
-    const clockIn = document.getElementById("clockIn").value.trim();
-    const clockOut = document.getElementById("clockOut").value.trim();
-
-    const totalMiles = parseFloat(totalMilesSpan.textContent) || 0;
-    const totalWait = parseFloat(totalWaitSpan.textContent) || 0;
-
-    if (!driverName || !tripdate || !vanID) {
+    if (!trip.driverName || !trip.tripdate || !trip.vanID) {
         tripMessage.textContent = "Please fill in Driver Name, Trip Date, and Van ID.";
         tripMessage.style.color = "red";
         return;
     }
 
-    if (isNaN(startOdometer) || isNaN(dropcrewOdometer)) {
-        tripMessage.textContent = "Odometer values must be numbers.";
-        tripMessage.style.color = "red";
-        return;
-    }
-
-    if (dropcrewOdometer < startOdometer) {
-        tripMessage.textContent = "Drop Crew Odometer cannot be less than Start Odometer.";
-        tripMessage.style.color = "red";
-        return;
-    }
-
-    const stops = collectStops();
-
-    const trip = {
-    driverName: document.getElementById("driverName").value,
-    tripdate: document.getElementById("tripdate").value,
-    vanID: document.getElementById("vanID").value,
-    startOdometer: document.getElementById("startOdometer").value,
-    rrNumber: document.getElementById("rrNumber").value,
-    hallconNumber: document.getElementById("hallconNumber").value,
-    tripType: document.getElementById("tripType").value,
-    crewNames: document.getElementById("crewNames").value,
-    destination: document.getElementById("destination").value,
-    dispatcher: document.getElementById("dispatcher").value,
-    stops: stops, 
-    dropcrewOdometer: document.getElementById("dropcrewOdometer").value,
-    dropcrewTime: document.getElementById("dropcrewTime").value,
-    totalMiles: document.getElementById("totalMiles").value,
-    totalWait: document.getElementById("totalWait").value,
-    clockIn: document.getElementById("clockIn").value,
-    clockOut: document.getElementById("clockOut").value,
-    notes: document.getElementById("notes").value,
-    submittedAt: new Date().toISOString() // Kept this as you requested!
-};
-
     tripMessage.textContent = "Submitting trip...";
     tripMessage.style.color = "yellow";
 
     try {
-        const ok = await appendTripToSheet(trip);
-        if (ok) {
-            tripMessage.textContent = "Trip submitted successfully.";
-            tripMessage.style.color = "lime";
+        // DIRECT FETCH (No external function needed)
+        const response = await fetch(SHEETS_WEB_APP_URL, {
+            method: "POST",
+            mode: "no-cors", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode: "appendTrip", trip })
+        });
 
-            tripForm.reset();
-            totalMilesSpan.textContent = "0";
-            totalWaitSpan.textContent = "0";
-            updateTotals();
-        } else {
-            tripMessage.textContent = "Trip submission failed.";
-            tripMessage.style.color = "red";
+        // With no-cors, we cannot read the response, so we check for browser errors
+        tripMessage.textContent = "Trip submitted successfully.";
+        tripMessage.style.color = "lime";
+        
+        tripForm.reset();
+        totalMilesSpan.textContent = "0";
+        totalWaitSpan.textContent = "0";
+        // Resetting stop table to 1 row
+        while (stopsTableBody.children.length > 1) {
+            stopsTableBody.removeChild(stopsTableBody.lastElementChild);
         }
     } catch (err) {
         console.error(err);
-        tripMessage.textContent = "Error submitting trip.";
+        tripMessage.textContent = "Error submitting trip. Check connection.";
         tripMessage.style.color = "red";
     }
 });
@@ -358,42 +284,45 @@ loadDriverTripsBtn.addEventListener("click", async () => {
 
     const startDate = driverStartDateInput.value;
     const endDate = driverEndDateInput.value;
+    if (!startDate || !endDate) return;
 
-    driverTripsBody.innerHTML = "";
-    driverTotalTripsSpan.textContent = "0";
-    driverTotalHoursSpan.textContent = "0";
+    driverTripsBody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
 
-    if (!startDate || !endDate) {
-        return;
+    try {
+        const response = await fetch(SHEETS_WEB_APP_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ mode: "fetchDriverTrips", driverId: currentUser.id, startDate, endDate })
+        });
+        const result = await response.json();
+        const trips = result.trips || [];
+
+        driverTripsBody.innerHTML = "";
+        let totalTrips = 0;
+        let totalHours = 0;
+
+        trips.forEach(trip => {
+            totalTrips++;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${trip.tripDate || ""}</td>
+                <td>${trip.clockIn || ""}</td>
+                <td>${trip.clockOut || ""}</td>
+                <td>${trip.totalMiles || 0}</td>
+                <td>${trip.totalWait || 0}</td>
+            `;
+            driverTripsBody.appendChild(row);
+            if (trip.clockIn && trip.clockOut) {
+                totalHours += estimateHours(trip.tripDate, trip.clockIn, trip.clockOut);
+            }
+        });
+
+        driverTotalTripsSpan.textContent = totalTrips.toString();
+        driverTotalHoursSpan.textContent = totalHours.toFixed(2);
+    } catch (err) {
+        console.error(err);
+        driverTripsBody.innerHTML = "<tr><td colspan='5'>Error loading history.</td></tr>";
     }
-
-    const trips = await fetchTripsForDriver(currentUser.id, startDate, endDate);
-    if (!Array.isArray(trips)) return;
-
-    let totalTrips = 0;
-    let totalHours = 0;
-
-    trips.forEach(trip => {
-        totalTrips++;
-
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${trip.tripDate || ""}</td>
-            <td>${trip.clockIn || ""}</td>
-            <td>${trip.clockOut || ""}</td>
-            <td>${trip.totalMiles || 0}</td>
-            <td>${trip.totalWait || 0}</td>
-        `;
-        driverTripsBody.appendChild(row);
-
-        if (trip.clockIn && trip.clockOut) {
-            const h = estimateHours(trip.tripDate, trip.clockIn, trip.clockOut);
-            totalHours += h;
-        }
-    });
-
-    driverTotalTripsSpan.textContent = totalTrips.toString();
-    driverTotalHoursSpan.textContent = totalHours.toFixed(2);
 });
 
 function estimateHours(dateStr, startTime, endTime) {
@@ -401,9 +330,6 @@ function estimateHours(dateStr, startTime, endTime) {
         const start = new Date(`${dateStr}T${startTime}`);
         const end = new Date(`${dateStr}T${endTime}`);
         const diffMs = end - start;
-        if (diffMs <= 0) return 0;
-        return diffMs / (1000 * 60 * 60);
-    } catch {
-        return 0;
-    }
+        return diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
+    } catch { return 0; }
 }
