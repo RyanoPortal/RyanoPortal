@@ -304,34 +304,26 @@ tripForm.addEventListener("submit", async (e) => {
     const stops = collectStops();
 
     const trip = {
-        driverId: currentUser.id,
-        role: currentUser.role,
-
-        driverName: driverName,
-        tripDate: tripdate,
-        tripType: tripType,
-        vanId: vanID,
-
-        rrNumber: rrNumber,
-        hallconNumber: hallconNumber,
-        crewNames: crewNames,
-        destination: destination,
-        dispatcherNumber: dispatcher,
-
-        startOdometer: startOdometer,
-        endOdometer: dropcrewOdometer,
-        totalMiles: totalMiles,
-        totalWait: totalWait,
-
-        dropCrewTime: dropcrewTime,
-        clockIn: clockIn,
-        clockOut: clockOut,
-
-        stops: stops,
-        notes: notes,
-
-        submittedAt: new Date().toISOString()
-    };
+    driverName: document.getElementById("driverName").value,
+    tripdate: document.getElementById("tripdate").value,
+    vanID: document.getElementById("vanID").value,
+    startOdometer: document.getElementById("startOdometer").value,
+    rrNumber: document.getElementById("rrNumber").value,
+    hallconNumber: document.getElementById("hallconNumber").value,
+    tripType: document.getElementById("tripType").value,
+    crewNames: document.getElementById("crewNames").value,
+    destination: document.getElementById("destination").value,
+    dispatcher: document.getElementById("dispatcher").value,
+    stops: stops, 
+    dropcrewOdometer: document.getElementById("dropcrewOdometer").value,
+    dropcrewTime: document.getElementById("dropcrewTime").value,
+    totalMiles: document.getElementById("totalMiles").value,
+    totalWait: document.getElementById("totalWait").value,
+    clockIn: document.getElementById("clockIn").value,
+    clockOut: document.getElementById("clockOut").value,
+    notes: document.getElementById("notes").value,
+    submittedAt: new Date().toISOString() // Kept this as you requested!
+};
 
     tripMessage.textContent = "Submitting trip...";
     tripMessage.style.color = "yellow";
