@@ -70,6 +70,13 @@ loginButton.addEventListener("click", () => {
     userRoleLabel.textContent = `Role: ${currentUser.role}`;
     userIdLabel.textContent = `User: ${currentUser.id}`;
 
+    // AUTO-POPULATE DRIVER NAME
+    const driverNameInput = document.getElementById("driverName");
+    if (driverNameInput) {
+        driverNameInput.value = currentUser.id;
+        driverNameInput.readOnly = true; // Make it read-only so they can't change it
+    }
+
     applyRoleUI();
     showView("dashboard");
 });
@@ -81,6 +88,13 @@ logoutButton.addEventListener("click", () => {
     passwordInput.value = "";
     userRoleLabel.textContent = "";
     userIdLabel.textContent = "";
+
+    // Clear driver name field
+    const driverNameInput = document.getElementById("driverName");
+    if (driverNameInput) {
+        driverNameInput.value = "";
+        driverNameInput.readOnly = false;
+    }
 
     navButtons.forEach(b => b.classList.remove("active"));
     const dashBtn = document.querySelector('.nav-btn[data-view="dashboard"]');
@@ -249,7 +263,6 @@ tripForm.addEventListener("submit", async (e) => {
     tripMessage.style.color = "yellow";
 
     try {
-        // DIRECT FETCH (No external function needed)
         const response = await fetch(SHEETS_WEB_APP_URL, {
             method: "POST",
             mode: "no-cors", 
@@ -257,11 +270,12 @@ tripForm.addEventListener("submit", async (e) => {
             body: JSON.stringify({ mode: "appendTrip", trip })
         });
 
-        // With no-cors, we cannot read the response, so we check for browser errors
         tripMessage.textContent = "Trip submitted successfully.";
         tripMessage.style.color = "lime";
         
         tripForm.reset();
+        // Re-populate driver name after reset
+        document.getElementById("driverName").value = currentUser.id;
         totalMilesSpan.textContent = "0";
         totalWaitSpan.textContent = "0";
         // Resetting stop table to 1 row
@@ -280,24 +294,46 @@ tripForm.addEventListener("submit", async (e) => {
 // ======================================================
 
 loadDriverTripsBtn.addEventListener("click", async () => {
-    if (!currentUser || currentUser.role !== "driver") return;
+    if (!currentUser) {
+        alert("You must be logged in.");
+        return;
+    }
 
     const startDate = driverStartDateInput.value;
     const endDate = driverEndDateInput.value;
-    if (!startDate || !endDate) return;
+    if (!startDate || !endDate) {
+        alert("Please select both start and end dates.");
+        return;
+    }
 
     driverTripsBody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
 
     try {
         const response = await fetch(SHEETS_WEB_APP_URL, {
             method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ mode: "fetchDriverTrips", driverId: currentUser.id, startDate, endDate })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                mode: "fetchDriverTrips", 
+                driverId: currentUser.id, 
+                startDate, 
+                endDate 
+            })
         });
+
         const result = await response.json();
+        console.log("Dashboard response:", result); // For debugging
+        
         const trips = result.trips || [];
 
         driverTripsBody.innerHTML = "";
+        
+        if (trips.length === 0) {
+            driverTripsBody.innerHTML = "<tr><td colspan='5'>No trips found for this date range.</td></tr>";
+            driverTotalTripsSpan.textContent = "0";
+            driverTotalHoursSpan.textContent = "0.00";
+            return;
+        }
+
         let totalTrips = 0;
         let totalHours = 0;
 
@@ -320,8 +356,8 @@ loadDriverTripsBtn.addEventListener("click", async () => {
         driverTotalTripsSpan.textContent = totalTrips.toString();
         driverTotalHoursSpan.textContent = totalHours.toFixed(2);
     } catch (err) {
-        console.error(err);
-        driverTripsBody.innerHTML = "<tr><td colspan='5'>Error loading history.</td></tr>";
+        console.error("Dashboard error:", err);
+        driverTripsBody.innerHTML = "<tr><td colspan='5'>Error loading history. Check console for details.</td></tr>";
     }
 });
 
