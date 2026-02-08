@@ -215,7 +215,7 @@ function collectStops() {
 // === GOOGLE SHEETS WEB APP URL ========================
 // ======================================================
 
-const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyE_bYvWGQlIF8pdvmVs4Xpy2PRe-cMka0cmWCIEqvcC1wwOh68424w8vV-ofNAys0/exec";
+const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyIgVGSZWj8rWVNllk5ADQ7QOwiZQzdPHMyu3zJ7OvnfE7kjWulGKy_RgK2CUApyhfx/exec";
 
 // ======================================================
 // === TRIP SUBMIT ======================================
