@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Trip Sheet</title>
+  <title>Trip Sheet Preview</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,6 +13,7 @@
     h1 {
       text-align: center;
       margin-bottom: 10px;
+      color: #333;
     }
     table {
       width: 100%;
@@ -22,39 +23,64 @@
     }
     th, td {
       border: 1px solid #000;
-      padding: 4px 6px;
+      padding: 6px 8px;
       vertical-align: top;
     }
     th {
       background: #f0f0f0;
       text-align: left;
+      font-weight: bold;
     }
     .no-border td, .no-border th {
       border: none;
     }
     .notes-box {
-      height: 120px;
+      min-height: 120px;
+      padding: 8px;
     }
     .small-text {
       font-size: 11px;
     }
     .section-title {
       font-weight: bold;
-      margin: 8px 0 4px;
+      margin: 12px 0 6px;
+      font-size: 16px;
     }
     #controls {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ccc;
       text-align: right;
     }
     #controls button {
-      padding: 6px 10px;
-      font-size: 13px;
+      padding: 8px 15px;
+      font-size: 14px;
+      margin-left: 10px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #controls button:hover {
+      background: #005fa3;
+    }
+    .info-message {
+      text-align: center;
+      padding: 40px;
+      font-size: 18px;
+      color: #666;
+    }
+    .error-message {
+      color: #d9534f;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <div id="controls">
-    <button onclick="window.history.back()">Back</button>
+    <button onclick="window.print()">Print</button>
+    <button onclick="window.close()">Close</button>
   </div>
 
   <h1>Trip Sheet</h1>
@@ -62,57 +88,61 @@
   <!-- Driver section -->
   <table>
     <tr>
-      <th>Driver Name</th>
-      <th>TRIP DATE</th>
-      <th>TRIP TYPE</th>
-      <th>VAN ID</th>
+      <th width="25%">Driver Name</th>
+      <th width="25%">TRIP DATE</th>
+      <th width="25%">TRIP TYPE</th>
+      <th width="25%">VAN ID</th>
     </tr>
     <tr>
-      <td id="driverNameCell"></td>
-      <td id="tripDateCell"></td>
-      <td id="tripTypeCell"></td>
-      <td id="vanIdCell"></td>
+      <td id="driverNameCell">-</td>
+      <td id="tripDateCell">-</td>
+      <td id="tripTypeCell">-</td>
+      <td id="vanIdCell">-</td>
     </tr>
   </table>
 
   <!-- RR / Hallcon -->
   <table>
     <tr>
-      <th>RR #</th>
-      <th>Hallcon #</th>
+      <th width="50%">RR #</th>
+      <th width="50%">Hallcon #</th>
     </tr>
     <tr>
-      <td id="rrNumberCell"></td>
-      <td id="hallconNumberCell"></td>
+      <td id="rrNumberCell">-</td>
+      <td id="hallconNumberCell">-</td>
     </tr>
   </table>
 
   <!-- Crew / Destination / Disp -->
   <table>
     <tr>
-      <th>Name(s)</th>
-      <th>To?</th>
-      <th>Disp #</th>
+      <th width="33%">Name(s)</th>
+      <th width="34%">To?</th>
+      <th width="33%">Disp #</th>
     </tr>
     <tr>
-      <td id="crewNamesCell"></td>
-      <td id="destinationCell"></td>
-      <td id="dispatcherNumberCell"></td>
+      <td id="crewNamesCell">-</td>
+      <td id="destinationCell">-</td>
+      <td id="dispatcherNumberCell">-</td>
     </tr>
   </table>
 
   <div class="section-title">STOPS WITH CREW</div>
 
   <table id="stopsTable">
-    <tr>
-      <th>#</th>
-      <th>TIMES</th>
-      <th>LOCATION</th>
-      <th>ODOMETER</th>
-      <th>WHY ?</th>
-      <th>MINS</th>
-    </tr>
-    <!-- rows injected by JS -->
+    <thead>
+      <tr>
+        <th width="5%">#</th>
+        <th width="15%">TIMES</th>
+        <th width="25%">LOCATION</th>
+        <th width="15%">ODOMETER</th>
+        <th width="15%">WHY ?</th>
+        <th width="15%">MINS</th>
+      </tr>
+    </thead>
+    <tbody id="stopsTableBody">
+      <!-- Stops will be inserted here by JavaScript -->
+    </tbody>
   </table>
 
   <div class="section-title">NOTES / APPROVALS</div>
@@ -124,20 +154,20 @@
 
   <table>
     <tr>
-      <th colspan="2">DROP CREW TIME</th>
-      <th>DROP CREW ODOMETER</th>
+      <th colspan="2" width="66%">DROP CREW TIME</th>
+      <th width="34%">DROP CREW ODOMETER</th>
     </tr>
     <tr>
-      <td colspan="2" id="dropCrewTimeCell"></td>
-      <td id="dropCrewOdometerCell"></td>
+      <td colspan="2" id="dropCrewTimeCell">-</td>
+      <td id="dropCrewOdometerCell">-</td>
     </tr>
     <tr>
       <th colspan="2">TOTAL WAIT</th>
       <th>TOTAL MILES</th>
     </tr>
     <tr>
-      <td colspan="2" id="totalWaitCell"></td>
-      <td id="totalMilesCell"></td>
+      <td colspan="2" id="totalWaitCell">0</td>
+      <td id="totalMilesCell">0</td>
     </tr>
     <tr>
       <td colspan="2"></td>
@@ -148,76 +178,127 @@
       <td><strong>Clock Out (Van DO Time)</strong></td>
     </tr>
     <tr>
-      <td id="clockInCell"></td>
-      <td></td>
-      <td id="clockOutCell"></td>
+      <td colspan="2" id="clockInCell">-</td>
+      <td id="clockOutCell">-</td>
     </tr>
   </table>
 
   <script>
+    // Function to load trip data from localStorage
     function loadTrip() {
       const raw = localStorage.getItem('lastTrip');
-      if (!raw) return;
-      const trip = JSON.parse(raw);
-
-      document.getElementById('driverNameCell').textContent = trip.driverName || '';
-      document.getElementById('tripDateCell').textContent = trip.tripDate || '';
-      document.getElementById('tripTypeCell').textContent = trip.tripType || '';
-      document.getElementById('vanIdCell').textContent = trip.vanId || '';
-
-      document.getElementById('rrNumberCell').textContent = trip.rrNumber || '';
-      document.getElementById('hallconNumberCell').textContent = trip.hallconNumber || '';
-
-      document.getElementById('crewNamesCell').textContent = trip.crewNames || '';
-      document.getElementById('destinationCell').textContent = trip.destination || '';
-      document.getElementById('dispatcherNumberCell').textContent = trip.dispatcherNumber || '';
-
-      const stopsTable = document.getElementById('stopsTable');
-      if (Array.isArray(trip.stops)) {
-        trip.stops.forEach((s, i) => {
-          const tr = document.createElement('tr');
-
-          const tdIndex = document.createElement('td');
-          tdIndex.textContent = s.index || i + 1;
-
-          const tdTimes = document.createElement('td');
-          tdTimes.textContent = s.times || '';
-
-          const tdLoc = document.createElement('td');
-          tdLoc.textContent = s.location || '';
-
-          const tdOdo = document.createElement('td');
-          tdOdo.textContent = s.odometer || '';
-
-          const tdWhy = document.createElement('td');
-          tdWhy.textContent = s.why || '';
-
-          const tdMins = document.createElement('td');
-          tdMins.textContent = s.mins !== undefined ? s.mins : '';
-
-          tr.appendChild(tdIndex);
-          tr.appendChild(tdTimes);
-          tr.appendChild(tdLoc);
-          tr.appendChild(tdOdo);
-          tr.appendChild(tdWhy);
-          tr.appendChild(tdMins);
-
-          stopsTable.appendChild(tr);
-        });
+      
+      if (!raw) {
+        showNoDataMessage();
+        return;
       }
-
-      document.getElementById('notesCell').textContent = trip.notes || '';
-
-      document.getElementById('dropCrewTimeCell').textContent = trip.dropCrewTime || '';
-      document.getElementById('dropCrewOdometerCell').textContent = trip.endOdometer || '';
-      document.getElementById('totalWaitCell').textContent = trip.totalWait || '';
-      document.getElementById('totalMilesCell').textContent = trip.totalMiles || '';
-
-      document.getElementById('clockInCell').textContent = trip.clockIn || '';
-      document.getElementById('clockOutCell').textContent = trip.clockOut || '';
+      
+      try {
+        const trip = JSON.parse(raw);
+        populateTripData(trip);
+      } catch (error) {
+        showErrorMessage('Error parsing trip data: ' + error.message);
+      }
     }
-
-    loadTrip();
+    
+    // Show message when no trip data is found
+    function showNoDataMessage() {
+      document.body.innerHTML = `
+        <div class="info-message">
+          <h2>No Trip Data Found</h2>
+          <p>Please create and save a trip from the main app first.</p>
+          <button onclick="window.close()" style="margin-top: 20px; padding: 10px 20px;">
+            Close Window
+          </button>
+        </div>
+      `;
+    }
+    
+    // Show error message
+    function showErrorMessage(message) {
+      document.body.innerHTML = `
+        <div class="info-message error-message">
+          <h2>Error</h2>
+          <p>${message}</p>
+          <button onclick="window.close()" style="margin-top: 20px; padding: 10px 20px;">
+            Close Window
+          </button>
+        </div>
+      `;
+    }
+    
+    // Populate all trip data into the preview
+    function populateTripData(trip) {
+      // Basic trip info
+      document.getElementById('driverNameCell').textContent = trip.driverName || '-';
+      document.getElementById('tripDateCell').textContent = formatDate(trip.tripDate) || '-';
+      document.getElementById('tripTypeCell').textContent = trip.tripType || '-';
+      document.getElementById('vanIdCell').textContent = trip.vanId || '-';
+      
+      // RR and Hallcon
+      document.getElementById('rrNumberCell').textContent = trip.rrNumber || '-';
+      document.getElementById('hallconNumberCell').textContent = trip.hallconNumber || '-';
+      
+      // Crew info
+      document.getElementById('crewNamesCell').textContent = trip.crewNames || '-';
+      document.getElementById('destinationCell').textContent = trip.destination || '-';
+      document.getElementById('dispatcherNumberCell').textContent = trip.dispatcher || '-';
+      
+      // Stops
+      const stopsTableBody = document.getElementById('stopsTableBody');
+      stopsTableBody.innerHTML = '';
+      
+      if (Array.isArray(trip.stops) && trip.stops.length > 0) {
+        trip.stops.forEach((stop, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${stop.index || index + 1}</td>
+            <td>${stop.times || ''}</td>
+            <td>${stop.location || ''}</td>
+            <td>${stop.odometer || ''}</td>
+            <td>${stop.why || ''}</td>
+            <td>${stop.wait || ''}</td>
+          `;
+          stopsTableBody.appendChild(row);
+        });
+      } else {
+        // Add one empty row if no stops
+        const row = document.createElement('tr');
+        row.innerHTML = '<td colspan="6" style="text-align: center;">No stops recorded</td>';
+        stopsTableBody.appendChild(row);
+      }
+      
+      // Notes
+      document.getElementById('notesCell').textContent = trip.notes || '';
+      
+      // End of trip data
+      document.getElementById('dropCrewTimeCell').textContent = trip.dropCrewTime || '-';
+      document.getElementById('dropCrewOdometerCell').textContent = trip.endOdometer || '-';
+      document.getElementById('totalWaitCell').textContent = trip.totalWait || '0';
+      document.getElementById('totalMilesCell').textContent = trip.totalMiles || '0';
+      document.getElementById('clockInCell').textContent = trip.clockIn || '-';
+      document.getElementById('clockOutCell').textContent = trip.clockOut || '-';
+    }
+    
+    // Format date for display
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      } catch {
+        return dateString;
+      }
+    }
+    
+    // Load trip when page loads
+    window.addEventListener('DOMContentLoaded', loadTrip);
   </script>
 </body>
 </html>
