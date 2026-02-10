@@ -296,3 +296,85 @@ body.dark-mode #darkModeToggle {
         flex: 1 0 50%;
     }
 }
+
+/* Add these styles to the end of your CSS file */
+
+/* Preview button styling */
+#previewTrip {
+    background-color: #6c757d;
+}
+
+#previewTrip:hover {
+    background-color: #545b62;
+}
+
+/* Spreadsheet view */
+.spreadsheet-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.sheet-link, .refresh-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.sheet-link {
+    background-color: #28a745;
+    color: white;
+}
+
+.sheet-link:hover {
+    background-color: #218838;
+}
+
+.refresh-btn {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.refresh-btn:hover {
+    background-color: #138496;
+}
+
+.data-summary {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+body.dark-mode .data-summary {
+    background-color: #2a2a2a;
+}
+
+/* Status message colors */
+.status-message {
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    font-weight: 500;
+}
+
+/* Print styles for preview */
+@media print {
+    #controls {
+        display: none;
+    }
+    
+    body {
+        margin: 0;
+        padding: 0;
+        background: white !important;
+        color: black !important;
+    }
+    
+    table {
+        page-break-inside: avoid;
+    }
+}
