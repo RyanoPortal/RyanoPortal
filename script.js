@@ -1,6 +1,8 @@
 // ======================================================
-// === SIMPLE AUTH MODEL ================================
+// === CONFIGURATION ====================================
 // ======================================================
+
+const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyIgVGSZWj8rWVNllk5ADQ7QOwiZQzdPHMyu3zJ7OvnfE7kjWulGKy_RgK2CUApyhfx/exec";
 
 const users = [
     { id: "driver1", password: "1234", role: "driver" },
@@ -9,6 +11,10 @@ const users = [
     { id: "manager1", password: "5678", role: "manager" },
     { id: "B Mgr", password: "0516", role: "manager" }
 ];
+
+// ======================================================
+// === STATE MANAGEMENT =================================
+// ======================================================
 
 let currentUser = null;
 
@@ -20,19 +26,13 @@ const loginOverlay = document.getElementById("login-overlay");
 const loginButton = document.getElementById("loginButton");
 const logoutButton = document.getElementById("logoutButton");
 const loginError = document.getElementById("loginError");
-
 const employeeIdInput = document.getElementById("employeeId");
 const passwordInput = document.getElementById("password");
-
 const navButtons = document.querySelectorAll(".nav-btn");
 const views = document.querySelectorAll(".view");
-
 const userRoleLabel = document.getElementById("userRoleLabel");
 const userIdLabel = document.getElementById("userIdLabel");
-
 const darkModeToggle = document.getElementById("darkModeToggle");
-
-// Trip sheet elements
 const tripForm = document.getElementById("tripForm");
 const addStopRowBtn = document.getElementById("addStopRow");
 const removeStopRowBtn = document.getElementById("removeStopRow");
@@ -40,8 +40,6 @@ const stopsTableBody = document.querySelector("#stopsTable tbody");
 const totalMilesSpan = document.getElementById("totalMiles");
 const totalWaitSpan = document.getElementById("totalWait");
 const tripMessage = document.getElementById("tripMessage");
-
-// Driver dashboard elements
 const driverStartDateInput = document.getElementById("driverStartDate");
 const driverEndDateInput = document.getElementById("driverEndDate");
 const loadDriverTripsBtn = document.getElementById("loadDriverTrips");
@@ -50,7 +48,33 @@ const driverTotalTripsSpan = document.getElementById("driverTotalTrips");
 const driverTotalHoursSpan = document.getElementById("driverTotalHours");
 
 // ======================================================
-// === LOGIN LOGIC ======================================
+// === INITIALIZATION ===================================
+// ======================================================
+
+// Set default dates for dashboard
+function setDefaultDates() {
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    driverStartDateInput.value = formatDateForInput(firstDay);
+    driverEndDateInput.value = formatDateForInput(today);
+    
+    // Set trip date to today by default
+    const tripDateInput = document.getElementById("tripdate");
+    if (tripDateInput) {
+        tripDateInput.value = formatDateForInput(today);
+    }
+}
+
+function formatDateForInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// ======================================================
+// === AUTHENTICATION ===================================
 // ======================================================
 
 loginButton.addEventListener("click", () => {
@@ -70,15 +94,16 @@ loginButton.addEventListener("click", () => {
     userRoleLabel.textContent = `Role: ${currentUser.role}`;
     userIdLabel.textContent = `User: ${currentUser.id}`;
 
-    // AUTO-POPULATE DRIVER NAME
+    // Auto-populate driver name
     const driverNameInput = document.getElementById("driverName");
     if (driverNameInput) {
         driverNameInput.value = currentUser.id;
-        driverNameInput.readOnly = true; // Make it read-only so they can't change it
+        driverNameInput.readOnly = true;
     }
 
     applyRoleUI();
     showView("dashboard");
+    setDefaultDates();
 });
 
 logoutButton.addEventListener("click", () => {
@@ -89,7 +114,6 @@ logoutButton.addEventListener("click", () => {
     userRoleLabel.textContent = "";
     userIdLabel.textContent = "";
 
-    // Clear driver name field
     const driverNameInput = document.getElementById("driverName");
     if (driverNameInput) {
         driverNameInput.value = "";
@@ -142,6 +166,13 @@ function showView(viewName) {
     views.forEach(v => v.classList.add("hidden"));
     const target = document.getElementById(`view-${viewName}`);
     if (target) target.classList.remove("hidden");
+    
+    // Load data for specific views
+    if (viewName === "database" && currentUser?.role === "manager") {
+        loadDatabaseView();
+    } else if (viewName === "spreadsheet" && currentUser?.role === "manager") {
+        loadSpreadsheetView();
+    }
 }
 
 // ======================================================
@@ -150,10 +181,16 @@ function showView(viewName) {
 
 darkModeToggle.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode");
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
 });
 
+// Check for saved dark mode preference
+if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+}
+
 // ======================================================
-// === STOP SYSTEM ======================================
+// === STOP MANAGEMENT ==================================
 // ======================================================
 
 addStopRowBtn.addEventListener("click", () => {
@@ -191,7 +228,6 @@ function updateTotals() {
 
 document.getElementById("startOdometer").addEventListener("input", updateTotals);
 document.getElementById("dropcrewOdometer").addEventListener("input", updateTotals);
-
 stopsTableBody.addEventListener("input", e => {
     if (e.target.classList.contains("stop-wait")) updateTotals();
 });
@@ -212,25 +248,17 @@ function collectStops() {
 }
 
 // ======================================================
-// === GOOGLE SHEETS WEB APP URL ========================
-// ======================================================
-
-const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyIgVGSZWj8rWVNllk5ADQ7QOwiZQzdPHMyu3zJ7OvnfE7kjWulGKy_RgK2CUApyhfx/exec";
-
-// ======================================================
-// === TRIP SUBMIT ======================================
+// === TRIP SUBMISSION ==================================
 // ======================================================
 
 tripForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (!currentUser) {
-        tripMessage.textContent = "You must be logged in.";
-        tripMessage.style.color = "red";
+        showTripMessage("You must be logged in.", "error");
         return;
     }
 
-    // Mapping exact HTML IDs
     const trip = {
         driverName: document.getElementById("driverName").value.trim(),
         tripdate: document.getElementById("tripdate").value.trim(),
@@ -254,46 +282,153 @@ tripForm.addEventListener("submit", async (e) => {
     };
 
     if (!trip.driverName || !trip.tripdate || !trip.vanID) {
-        tripMessage.textContent = "Please fill in Driver Name, Trip Date, and Van ID.";
-        tripMessage.style.color = "red";
+        showTripMessage("Please fill in Driver Name, Trip Date, and Van ID.", "error");
         return;
     }
 
-    tripMessage.textContent = "Submitting trip...";
-    tripMessage.style.color = "yellow";
+    showTripMessage("Submitting trip...", "loading");
 
     try {
         const response = await fetch(SHEETS_WEB_APP_URL, {
             method: "POST",
-            mode: "no-cors", 
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ mode: "appendTrip", trip })
         });
-
-        tripMessage.textContent = "Trip submitted successfully.";
-        tripMessage.style.color = "lime";
         
-        tripForm.reset();
-        // Re-populate driver name after reset
-        document.getElementById("driverName").value = currentUser.id;
-        totalMilesSpan.textContent = "0";
-        totalWaitSpan.textContent = "0";
-        // Resetting stop table to 1 row
-        while (stopsTableBody.children.length > 1) {
-            stopsTableBody.removeChild(stopsTableBody.lastElementChild);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showTripMessage("Trip submitted successfully!", "success");
+            
+            // Reset form but keep driver name
+            const driverName = document.getElementById("driverName").value;
+            tripForm.reset();
+            document.getElementById("driverName").value = driverName;
+            document.getElementById("driverName").readOnly = true;
+            
+            // Reset trip date to today
+            document.getElementById("tripdate").value = formatDateForInput(new Date());
+            
+            totalMilesSpan.textContent = "0";
+            totalWaitSpan.textContent = "0";
+            
+            // Reset stops table
+            while (stopsTableBody.children.length > 1) {
+                stopsTableBody.removeChild(stopsTableBody.lastElementChild);
+            }
+            stopsTableBody.querySelector('.stop-number').textContent = "1";
+            
+            // Save for preview
+            saveTripForPreview(trip);
+            
+        } else {
+            throw new Error(result.error || "Submission failed");
         }
     } catch (err) {
-        console.error(err);
-        tripMessage.textContent = "Error submitting trip. Check connection.";
-        tripMessage.style.color = "red";
+        console.error("Submission error:", err);
+        showTripMessage(`Error: ${err.message}`, "error");
     }
 });
+
+function showTripMessage(message, type) {
+    tripMessage.textContent = message;
+    tripMessage.className = "status-message";
+    
+    switch(type) {
+        case "error":
+            tripMessage.style.color = "#ff6b6b";
+            break;
+        case "success":
+            tripMessage.style.color = "#51cf66";
+            break;
+        case "loading":
+            tripMessage.style.color = "#ffd43b";
+            break;
+        default:
+            tripMessage.style.color = "#868e96";
+    }
+}
+
+// ======================================================
+// === TRIP PREVIEW =====================================
+// ======================================================
+
+// Add preview button event listener
+document.addEventListener('DOMContentLoaded', () => {
+    const previewBtn = document.getElementById('previewTrip');
+    if (previewBtn) {
+        previewBtn.addEventListener('click', openTripPreview);
+    }
+});
+
+function saveTripForPreview(trip) {
+    // Save a clean version for preview
+    const previewTrip = {
+        driverName: trip.driverName,
+        tripDate: trip.tripdate,
+        tripType: trip.tripType,
+        vanId: trip.vanID,
+        rrNumber: trip.rrNumber,
+        hallconNumber: trip.hallconNumber,
+        crewNames: trip.crewNames,
+        destination: trip.destination,
+        dispatcher: trip.dispatcher,
+        stops: trip.stops,
+        notes: trip.notes,
+        dropCrewTime: trip.dropcrewTime,
+        endOdometer: trip.dropcrewOdometer,
+        totalWait: trip.totalWait,
+        totalMiles: trip.totalMiles,
+        clockIn: trip.clockIn,
+        clockOut: trip.clockOut
+    };
+    
+    localStorage.setItem('lastTrip', JSON.stringify(previewTrip));
+}
+
+function openTripPreview() {
+    // Collect current form data
+    const trip = {
+        driverName: document.getElementById("driverName").value.trim(),
+        tripDate: document.getElementById("tripdate").value.trim(),
+        tripType: document.getElementById("tripType").value.trim(),
+        vanId: document.getElementById("vanID").value.trim(),
+        rrNumber: document.getElementById("rrNumber").value.trim(),
+        hallconNumber: document.getElementById("hallconNumber").value.trim(),
+        crewNames: document.getElementById("crewNames").value.trim(),
+        destination: document.getElementById("destination").value.trim(),
+        dispatcher: document.getElementById("dispatcher").value.trim(),
+        stops: collectStops(),
+        notes: document.getElementById("notes").value.trim(),
+        dropCrewTime: document.getElementById("dropcrewTime").value.trim(),
+        endOdometer: document.getElementById("dropcrewOdometer").value.trim(),
+        totalWait: totalWaitSpan.textContent,
+        totalMiles: totalMilesSpan.textContent,
+        clockIn: document.getElementById("clockIn").value.trim(),
+        clockOut: document.getElementById("clockOut").value.trim()
+    };
+    
+    // Validate required fields
+    if (!trip.driverName || !trip.tripDate || !trip.vanId) {
+        alert("Please fill in Driver Name, Trip Date, and Van ID before previewing.");
+        return;
+    }
+    
+    saveTripForPreview(trip);
+    window.open('trip-sheet-preview.html', '_blank', 'width=800,height=1000');
+}
 
 // ======================================================
 // === DRIVER DASHBOARD =================================
 // ======================================================
 
-loadDriverTripsBtn.addEventListener("click", async () => {
+loadDriverTripsBtn.addEventListener("click", loadDriverDashboard);
+
+async function loadDriverDashboard() {
     if (!currentUser) {
         alert("You must be logged in.");
         return;
@@ -301,6 +436,7 @@ loadDriverTripsBtn.addEventListener("click", async () => {
 
     const startDate = driverStartDateInput.value;
     const endDate = driverEndDateInput.value;
+    
     if (!startDate || !endDate) {
         alert("Please select both start and end dates.");
         return;
@@ -320,9 +456,11 @@ loadDriverTripsBtn.addEventListener("click", async () => {
             })
         });
 
-        const result = await response.json();
-        console.log("Dashboard response:", result); // For debugging
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
+        const result = await response.json();
         const trips = result.trips || [];
 
         driverTripsBody.innerHTML = "";
@@ -348,6 +486,7 @@ loadDriverTripsBtn.addEventListener("click", async () => {
                 <td>${trip.totalWait || 0}</td>
             `;
             driverTripsBody.appendChild(row);
+            
             if (trip.clockIn && trip.clockOut) {
                 totalHours += estimateHours(trip.tripDate, trip.clockIn, trip.clockOut);
             }
@@ -357,9 +496,9 @@ loadDriverTripsBtn.addEventListener("click", async () => {
         driverTotalHoursSpan.textContent = totalHours.toFixed(2);
     } catch (err) {
         console.error("Dashboard error:", err);
-        driverTripsBody.innerHTML = "<tr><td colspan='5'>Error loading history. Check console for details.</td></tr>";
+        driverTripsBody.innerHTML = `<tr><td colspan='5'>Error loading trips: ${err.message}</td></tr>`;
     }
-});
+}
 
 function estimateHours(dateStr, startTime, endTime) {
     try {
@@ -367,5 +506,120 @@ function estimateHours(dateStr, startTime, endTime) {
         const end = new Date(`${dateStr}T${endTime}`);
         const diffMs = end - start;
         return diffMs > 0 ? diffMs / (1000 * 60 * 60) : 0;
-    } catch { return 0; }
+    } catch { 
+        return 0; 
+    }
 }
+
+// ======================================================
+// === MANAGER VIEWS ====================================
+// ======================================================
+
+async function loadDatabaseView() {
+    const databaseBody = document.getElementById("databaseBody");
+    if (!databaseBody) return;
+    
+    databaseBody.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+    
+    try {
+        const response = await fetch(SHEETS_WEB_APP_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode: "fetchAllTrips" })
+        });
+        
+        if (!response.ok) throw new Error("Failed to fetch data");
+        
+        const result = await response.json();
+        const trips = result.trips || [];
+        
+        databaseBody.innerHTML = "";
+        
+        if (trips.length === 0) {
+            databaseBody.innerHTML = "<tr><td colspan='6'>No trips found</td></tr>";
+            return;
+        }
+        
+        trips.forEach(trip => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${trip.date || ""}</td>
+                <td>${trip.driver || ""}</td>
+                <td>${trip.vehicle || ""}</td>
+                <td>${trip.miles || 0}</td>
+                <td>${trip.wait || 0}</td>
+                <td>${trip.clockIn || ""} - ${trip.clockOut || ""}</td>
+            `;
+            databaseBody.appendChild(row);
+        });
+    } catch (err) {
+        console.error("Database error:", err);
+        databaseBody.innerHTML = "<tr><td colspan='6'>Error loading database</td></tr>";
+    }
+}
+
+function loadSpreadsheetView() {
+    const container = document.getElementById("spreadsheetContainer");
+    if (!container) return;
+    
+    container.innerHTML = `
+        <h3>Google Sheets Integration</h3>
+        <p>Your trip data is automatically synced to Google Sheets.</p>
+        <div class="spreadsheet-actions">
+            <button onclick="window.open('https://docs.google.com/spreadsheets/d/1Gnu7tG-56xRiy7qA7BODgh3b9glJw3HhkXwTYzUCM-E/edit#gid=0', '_blank')" class="sheet-link">
+                Open Full Spreadsheet
+            </button>
+            <button onclick="refreshSpreadsheetView()" class="refresh-btn">
+                Refresh Data
+            </button>
+        </div>
+        <div class="data-summary">
+            <p>Total trips are automatically updated in the Google Sheet.</p>
+            <p>Managers can edit and analyze data directly in the spreadsheet.</p>
+        </div>
+    `;
+}
+
+function refreshSpreadsheetView() {
+    alert("Data is automatically synced. The Google Sheet will show the latest data.");
+}
+
+// ======================================================
+// === INITIAL SETUP ====================================
+// ======================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if user was previously logged in
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        try {
+            currentUser = JSON.parse(savedUser);
+            loginOverlay.style.display = "none";
+            userRoleLabel.textContent = `Role: ${currentUser.role}`;
+            userIdLabel.textContent = `User: ${currentUser.id}`;
+            applyRoleUI();
+            
+            const driverNameInput = document.getElementById("driverName");
+            if (driverNameInput) {
+                driverNameInput.value = currentUser.id;
+                driverNameInput.readOnly = true;
+            }
+            
+            setDefaultDates();
+        } catch {
+            localStorage.removeItem('currentUser');
+        }
+    }
+    
+    // Save user on login
+    loginButton.addEventListener("click", () => {
+        if (currentUser) {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+    });
+    
+    // Clear on logout
+    logoutButton.addEventListener("click", () => {
+        localStorage.removeItem('currentUser');
+    });
+});
