@@ -1,26 +1,35 @@
+/* ======================================================
+   RYANO TRIP SHEET - CLEAN & MOBILE FIRST
+   ====================================================== */
+
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
 }
 
 body {
-    background-color: #f4f4f4;
-    color: #222;
-    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f5f7fa;
+    color: #1e293b;
+    line-height: 1.5;
 }
 
-body.dark-mode {
-    background-color: #121212;
-    color: #eee;
-}
+/* ======================================================
+   LOGIN SCREEN
+   ====================================================== */
 
-/* Login Overlay */
 #login-overlay {
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #0f172a;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,224 +38,451 @@ body.dark-mode {
 
 #login-box {
     background: white;
-    padding: 2.5rem;
-    border-radius: 12px;
-    width: 380px;
-    max-width: 90%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-body.dark-mode #login-box {
-    background: #1e1e1e;
-    border: 1px solid #444;
+    width: 90%;
+    max-width: 400px;
+    padding: 2rem 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
 }
 
 #login-box h2 {
+    color: #0f172a;
+    font-size: 1.5rem;
+    font-weight: 600;
     margin-bottom: 1.5rem;
     text-align: center;
+}
+
+#login-box label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.25rem;
 }
 
 #login-box input {
     width: 100%;
     padding: 0.75rem;
-    margin: 0.5rem 0 1rem;
-    border: 2px solid #ddd;
-    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
     font-size: 1rem;
+    margin-bottom: 1rem;
 }
 
-#login-box button {
+#login-box input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+
+#loginButton {
     width: 100%;
-    padding: 0.85rem;
-    background: #0077cc;
+    padding: 0.875rem;
+    background: #2563eb;
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
     margin-top: 0.5rem;
 }
 
-#login-box button:hover {
-    background: #005fa3;
+#loginButton:hover {
+    background: #1d4ed8;
 }
 
-/* App Container */
+.error-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+    text-align: center;
+}
+
+/* ======================================================
+   MAIN APP CONTAINER
+   ====================================================== */
+
 #app-container {
+    min-height: 100vh;
+    background: #f5f7fa;
+}
+
+#main {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
-#main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
+/* ======================================================
+   HEADER - SIMPLE & CLEAN
+   ====================================================== */
 
-/* Header */
 #header {
-    height: 70px;
     background: white;
-    border-bottom: 2px solid #e0e0e0;
+    padding: 0.75rem 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
-}
-
-body.dark-mode #header {
-    background: #1e1e1e;
-    border-bottom-color: #333;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 #user-info {
-    font-size: 1.1rem;
+    font-size: 0.875rem;
     font-weight: 600;
+    color: #0f172a;
 }
 
 .header-right {
     display: flex;
-    gap: 10px;
+    gap: 0.5rem;
 }
 
-/* Content */
+.header-right button {
+    padding: 0.5rem 1rem;
+    background: #f1f5f9;
+    color: #1e293b;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.header-right button:hover {
+    background: #e2e8f0;
+}
+
+/* ======================================================
+   CONTENT AREA
+   ====================================================== */
+
 #content {
     flex: 1;
-    padding: 2rem;
-    max-width: 1400px;
+    padding: 1rem;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
 }
 
-/* Forms */
-input, textarea, select {
-    width: 100%;
-    padding: 0.6rem;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    font-size: 0.95rem;
-    transition: all 0.2s;
+/* ======================================================
+   TRIP SHEET FORM - CLEAN & READABLE
+   ====================================================== */
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-input:focus, textarea:focus {
-    border-color: #0077cc;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0,119,204,0.1);
+/* Form Sections */
+section[style*="background: #f8f9fa"] {
+    background: white !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.25rem !important;
+    margin-bottom: 1rem;
 }
 
-body.dark-mode input,
-body.dark-mode textarea {
-    background: #2a2a2a;
-    border-color: #444;
-    color: #eee;
+/* Grid Layouts - Mobile First */
+[style*="grid-template-columns"] {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
 }
 
+/* Tablet */
+@media (min-width: 640px) {
+    [style*="grid-template-columns: 1fr 1fr 1fr 1fr"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    [style*="grid-template-columns: 1fr 1fr 1fr"] {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+    [style*="grid-template-columns: 1fr 1fr 1fr 1fr"] {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+    [style*="grid-template-columns: 1fr 1fr 1fr"] {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+
+/* Form Labels */
 label {
     display: block;
-    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
     font-weight: 600;
-    font-size: 0.9rem;
+    color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
 }
 
-/* Buttons */
-button {
-    padding: 0.6rem 1.2rem;
-    background: #6c757d;
-    color: white;
-    border: none;
+/* Form Inputs */
+input, textarea, select {
+    width: 100%;
+    padding: 0.625rem;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
+    font-size: 0.9375rem;
+    background: white;
+    color: #0f172a;
 }
 
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 
-#submitTrip {
-    background: #28a745;
+input[readonly] {
+    background: #f8fafc;
+    color: #475569;
 }
 
-#previewTrip {
-    background: #0077cc;
-}
+/* ======================================================
+   STOPS TABLE - MOBILE FRIENDLY
+   ====================================================== */
 
-/* Tables */
 .table-container {
     overflow-x: auto;
-    border-radius: 8px;
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
 }
 
-table {
+#stopsTable {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    font-size: 0.8125rem;
+    min-width: 700px;
 }
 
-body.dark-mode table {
-    background: #1e1e1e;
-}
-
-th {
-    background: #e9ecef;
-    padding: 12px;
+#stopsTable th {
+    background: #f8fafc;
+    color: #1e293b;
     font-weight: 600;
+    padding: 0.75rem 0.5rem;
     text-align: left;
-    border: 1px solid #dee2e6;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
 }
 
-td {
-    padding: 10px;
-    border: 1px solid #dee2e6;
+#stopsTable td {
+    padding: 0.5rem;
+    border-bottom: 1px solid #e2e8f0;
     vertical-align: middle;
 }
 
-body.dark-mode th {
-    background: #2a2a2a;
-    border-color: #444;
+#stopsTable input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 0.8125rem;
 }
 
-body.dark-mode td {
-    border-color: #444;
-}
-
-/* Status Messages */
-.status-message {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    border-radius: 6px;
+.stop-number {
     font-weight: 600;
+    color: #0f172a;
     text-align: center;
-    font-size: 1.1rem;
 }
 
-/* Dark Mode Toggle */
-#darkModeToggle {
-    background: #6c757d;
-    padding: 0.6rem 1.2rem;
+.remove-stop-btn {
+    padding: 0.375rem 0.75rem !important;
+    background: #ef4444 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 0.75rem !important;
 }
 
-/* Print Guide Modal */
-#printGuideModal {
-    animation: fadeIn 0.3s;
+/* Stop Action Buttons */
+#addStopRow, #removeStopRow {
+    padding: 0.625rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+#addStopRow {
+    background: #22c55e;
+    color: white;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    #content { padding: 1rem; }
-    .grid-4, .grid-3, .grid-6 {
-        grid-template-columns: 1fr !important;
+#removeStopRow {
+    background: #ef4444;
+    color: white;
+}
+
+/* ======================================================
+   BUTTONS - CLEAN & CONSISTENT
+   ====================================================== */
+
+.button-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+@media (min-width: 480px) {
+    .button-row {
+        flex-direction: row;
+        justify-content: flex-end;
     }
+}
+
+.button-row button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
+
+@media (min-width: 480px) {
+    .button-row button {
+        width: auto;
+    }
+}
+
+#submitTrip {
+    background: #22c55e;
+    color: white;
+}
+
+#previewTrip {
+    background: #3b82f6;
+    color: white;
+}
+
+#clearFormBtn {
+    background: #94a3b8;
+    color: white;
+}
+
+/* ======================================================
+   STATUS MESSAGES
+   ====================================================== */
+
+.status-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ======================================================
+   DARK MODE - PROPER & READABLE
+   ====================================================== */
+
+body.dark-mode {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+body.dark-mode #header {
+    background: #1e293b;
+    border-bottom-color: #334155;
+}
+
+body.dark-mode #user-info {
+    color: #f1f5f9;
+}
+
+body.dark-mode .header-right button {
+    background: #334155;
+    color: #f1f5f9;
+    border-color: #475569;
+}
+
+body.dark-mode section[style*="background: #f8f9fa"] {
+    background: #1e293b !important;
+    border-color: #334155;
+}
+
+body.dark-mode label {
+    color: #94a3b8;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background: #0f172a;
+    border-color: #334155;
+    color: #f1f5f9;
+}
+
+body.dark-mode input[readonly] {
+    background: #1e293b;
+    color: #cbd5e1;
+}
+
+body.dark-mode #stopsTable th {
+    background: #1e293b;
+    color: #f1f5f9;
+    border-bottom-color: #475569;
+}
+
+body.dark-mode #stopsTable td {
+    border-bottom-color: #334155;
+}
+
+body.dark-mode #stopsTable input {
+    background: #0f172a;
+    border-color: #475569;
+    color: #f1f5f9;
+}
+
+/* ======================================================
+   PRINT PREVIEW PAGE
+   ====================================================== */
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+        padding: 0.25in;
+    }
+    
+    .trip-sheet {
+        border: 1px solid #000;
+        padding: 0.2in;
+    }
+}
+
+/* ======================================================
+   UTILITIES
+   ====================================================== */
+
+.hidden {
+    display: none !important;
+}
+
+.view {
+    display: block;
+}
+
+.view.hidden {
+    display: none;
 }
