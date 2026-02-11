@@ -1,29 +1,28 @@
 /* ======================================================
-   VARIABLES - THE "BASIC" ESSENTIALS
+   VARIABLES - HIGH CONTRAST BASIC
    ====================================================== */
 :root {
-    /* Light Mode - Clean & Neutral */
-    --bg-page: #f8f9fa;
+    /* Light Mode - Sharp & Clear */
+    --bg-page: #f0f2f5;
     --bg-surface: #ffffff;
     --bg-input: #ffffff;
-    --border: #dee2e6;
-    --text-main: #212529;
-    --text-muted: #6c757d;
+    --border: #000000;       /* Solid black borders for clarity */
+    --text-main: #000000;    /* Pure black text */
+    --text-muted: #000000;   /* Also black, but we'll use opacity if needed */
     
-    /* Global Accents */
-    --primary: #0d6efd;
+    --primary: #0056b3;
     --success: #198754;
-    --danger: #dc3545;
+    --danger: #d00000;
 }
 
 body.dark-mode {
-    /* Dark Mode - High Contrast Charcoal */
-    --bg-page: #121212;      /* Deep Charcoal */
-    --bg-surface: #1e1e1e;   /* Slightly lighter surface */
-    --bg-input: #252525;     /* Distinct input fields */
-    --border: #333333;       /* Subtle borders */
-    --text-main: #f8f9fa;    /* Off-white text */
-    --text-muted: #adb5bd;   /* Light gray muted text */
+    /* Dark Mode - True Dark (No White Anywhere) */
+    --bg-page: #000000;      /* Pure black background */
+    --bg-surface: #1a1a1a;   /* Dark charcoal surfaces */
+    --bg-input: #2d2d2d;     /* Slightly lighter for input visibility */
+    --border: #444444;
+    --text-main: #ffffff;    /* Pure white text */
+    --text-muted: #cccccc;
 }
 
 /* ======================================================
@@ -43,74 +42,94 @@ body {
 }
 
 /* ======================================================
-   CONTAINERS (Sections/Cards)
+   HEADER - SPLIT BUTTONS
    ====================================================== */
-#login-box, 
-section, 
 #header {
     background-color: var(--bg-surface);
-    border: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Pushes content to the edges */
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-section {
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
-
-/* Fix for your specific section styling */
-section[style*="background"] {
-    background-color: var(--bg-surface) !important;
+/* Force User Info/Logout to the far right */
+.header-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-left: auto; 
 }
 
 /* ======================================================
-   FORMS & INPUTS
+   CONTAINERS & FORMS
    ====================================================== */
+#content {
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-x: hidden;
+}
+
+section {
+    background-color: var(--bg-surface) !important;
+    border: 2px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
 label {
     display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 800; /* Extra bold for readability */
+    color: var(--text-main);
     margin-bottom: 0.4rem;
+    text-transform: uppercase;
 }
 
 input, select, textarea {
     width: 100%;
-    padding: 0.6rem;
+    padding: 0.75rem;
     background-color: var(--bg-input);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     color: var(--text-main);
     border-radius: 4px;
-}
-
-input:focus {
-    outline: 2px solid var(--primary);
-    outline-offset: -1px;
-}
-
-input[readonly] {
-    opacity: 0.7;
-    cursor: not-allowed;
+    font-size: 1rem;
 }
 
 /* ======================================================
-   TABLES
+   THE TABLE FIX (MOBILE RESPONSIVE)
    ====================================================== */
+.table-container {
+    width: 100%;
+    overflow-x: auto; /* Enable swiping on the table */
+    -webkit-overflow-scrolling: touch;
+    border: 2px solid var(--border);
+    margin-top: 1rem;
+}
+
 #stopsTable {
     width: 100%;
     border-collapse: collapse;
+    min-width: 700px; /* Keeps the table from squishing */
 }
 
 #stopsTable th {
     background-color: var(--bg-page);
+    color: var(--text-main);
     border-bottom: 2px solid var(--border);
-    padding: 0.75rem;
+    padding: 10px;
     text-align: left;
 }
 
 #stopsTable td {
     border-bottom: 1px solid var(--border);
-    padding: 0.75rem;
+    padding: 8px;
+    background-color: var(--bg-surface);
 }
 
 /* ======================================================
@@ -118,30 +137,45 @@ input[readonly] {
    ====================================================== */
 button {
     cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    padding: 0.75rem 1.25rem;
-    font-weight: 600;
-    transition: opacity 0.2s;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 700;
+    color: white; /* Keep text white on colored buttons */
 }
 
-button:hover {
-    opacity: 0.9;
+#previewTrip { background-color: var(--primary); }
+#submitTrip, #addStopRow { background-color: var(--success); }
+#removeStopRow, .remove-stop-btn { background-color: var(--danger); }
+#clearFormBtn, #logoutButton { background-color: #333; }
+
+/* Dark mode button text correction */
+body.dark-mode button {
+    border-color: #ffffff;
 }
 
-#loginButton, #previewTrip { background-color: var(--primary); color: white; }
-#submitTrip, #addStopRow { background-color: var(--success); color: white; }
-#removeStopRow, .remove-stop-btn { background-color: var(--danger); color: white; }
-#clearFormBtn { background-color: var(--text-muted); color: white; }
+/* ======================================================
+   PRINT RULES
+   ====================================================== */
+@media print {
+    /* Hide the UI elements and the instruction text */
+    #header, .button-row, .no-print, #print-instructions {
+        display: none !important;
+    }
+    
+    body {
+        background: white !important;
+        color: black !important;
+    }
+    
+    section {
+        border: 1px solid #000 !important;
+        margin: 0;
+        padding: 10px;
+    }
+}
 
 /* ======================================================
    UTILITIES
    ====================================================== */
 .hidden { display: none !important; }
-
-@media (max-width: 600px) {
-    [style*="grid-template-columns"] {
-        display: flex !important;
-        flex-direction: column;
-    }
-}
