@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Ryano Portal</title>
+    <title>Ryano Trip Sheet</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
 </head>
@@ -11,14 +11,11 @@
     <!-- Login Overlay -->
     <div id="login-overlay">
         <div id="login-box">
-            <h2>Ryano Portal Login</h2>
-
+            <h2>Ryano Trip Sheet Login</h2>
             <label for="employeeId">Employee ID</label>
             <input type="text" id="employeeId" placeholder="Enter ID" />
-
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Enter Password" />
-
             <button id="loginButton">Login</button>
             <p id="loginError" class="error-message"></p>
         </div>
@@ -27,255 +24,181 @@
     <!-- App Container -->
     <div id="app-container">
         <div id="main">
-
             <!-- Header -->
             <header id="header">
                 <div id="user-info">
-                    <span id="userRoleLabel"></span>
                     <span id="userIdLabel"></span>
                 </div>
                 <div class="header-right">
-                    <button id="darkModeToggle">Toggle Dark Mode</button>
+                    <button id="darkModeToggle">🌙 Dark Mode</button>
+                    <button id="logoutButton" style="margin-left: 10px;">Logout</button>
                 </div>
             </header>
 
-            <!-- Navigation -->
-            <nav id="top-nav">
-                <button class="nav-btn active" data-view="dashboard">Dashboard</button>
-                <button class="nav-btn" data-view="trip-sheet">Trip Sheet</button>
-                <button class="nav-btn" data-view="database">Database</button>
-                <button class="nav-btn" data-view="spreadsheet">Spreadsheet</button>
-                <button class="nav-btn" id="logoutButton">Logout</button>
-            </nav>
-
-            <!-- Main Content -->
+            <!-- Main Content - ONLY TRIP SHEET -->
             <main id="content">
-
-                <!-- Dashboard -->
-                <section class="view" id="view-dashboard">
-                    <h1>Dashboard</h1>
-
-                    <section id="driver-summary" class="card">
-                        <h2>My Trip Summary</h2>
-
-                        <div class="summary-row">
-                            <div>
-                                <label for="driverStartDate">Start Date</label>
-                                <input type="date" id="driverStartDate" />
-                            </div>
-                            <div>
-                                <label for="driverEndDate">End Date</label>
-                                <input type="date" id="driverEndDate" />
-                            </div>
-                            <div>
-                                <button id="loadDriverTrips">Load My Trips</button>
-                            </div>
-                        </div>
-
-                        <div class="summary-row">
-                            <div><strong>Total Trips:</strong> <span id="driverTotalTrips">0</span></div>
-                            <div><strong>Total Hours (approx):</strong> <span id="driverTotalHours">0</span></div>
-                        </div>
-                    </section>
-
-                    <section id="driver-history" class="card">
-                        <h2>My Trip History</h2>
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Start Time</th>
-                                        <th>End Time</th>
-                                        <th>Miles</th>
-                                        <th>Wait (min)</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="driverTripsBody"></tbody>
-                            </table>
-                        </div>
-                    </section>
-                </section>
-
-                <!-- Trip Sheet -->
-                <section class="view hidden" id="view-trip-sheet">
-                    <h1>Trip Sheet</h1>
-                    <hr>
+                <!-- Trip Sheet View -->
+                <section class="view" id="view-trip-sheet">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h1>📋 Trip Sheet</h1>
+                        <button id="printStyleGuide" style="background: #6c757d; padding: 8px 16px;" onclick="showPrintGuide()">🖨️ Print Guide</button>
+                    </div>
 
                     <form id="tripForm">
+                        <!-- Driver Info Row -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                            <div>
+                                <label><strong>Driver Name</strong></label>
+                                <input type="text" id="driverName" required readonly style="background: #e9ecef;" />
+                            </div>
+                            <div>
+                                <label><strong>Trip Date</strong></label>
+                                <input type="date" id="tripdate" required />
+                            </div>
+                            <div>
+                                <label><strong>Van ID</strong></label>
+                                <input type="text" id="vanID" required />
+                            </div>
+                            <div>
+                                <label><strong>Trip Type</strong></label>
+                                <input type="text" id="tripType" placeholder="e.g., Crew Transport" />
+                            </div>
+                        </div>
 
-                        <!-- Driver Info -->
-                        <section class="card">
-                            <h2>Driver Info</h2>
+                        <!-- Trip Details Grid -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                            <div>
+                                <label><strong>RR #</strong></label>
+                                <input type="text" id="rrNumber" placeholder="RR number" />
+                            </div>
+                            <div>
+                                <label><strong>Hallcon #</strong></label>
+                                <input type="text" id="hallconNumber" placeholder="Hallcon number" />
+                            </div>
+                            <div>
+                                <label><strong>Dispatcher #</strong></label>
+                                <input type="text" id="dispatcher" placeholder="Dispatcher number" />
+                            </div>
+                            <div>
+                                <label><strong>Crew Names</strong></label>
+                                <input type="text" id="crewNames" placeholder="Names of crew members" />
+                            </div>
+                            <div>
+                                <label><strong>Destination</strong></label>
+                                <input type="text" id="destination" placeholder="Where to?" />
+                            </div>
+                            <div>
+                                <label><strong>Start Odometer</strong></label>
+                                <input type="number" id="startOdometer" required placeholder="00000" />
+                            </div>
+                        </div>
 
-                            <label for="driverName">Driver Name</label>
-                            <input type="text" id="driverName" required />
-
-                            <br>
-
-                            <label for="tripdate">Trip Date</label>
-                            <input type="date" id="tripdate" required />
-
-                            <br>
-
-                            <label for="vanID">Van ID</label>
-                            <input type="text" id="vanID" required />
-
-                            <br>
-
-                            <label for="startOdometer">Start Odometer</label>
-                            <input type="number" id="startOdometer" required />
-                        </section>
-
-                        <hr>
-
-                        <!-- Crew Info -->
-                        <section class="card">
-                            <h2>Crew Info</h2>
-
-                            <label for="rrNumber">RR #</label>
-                            <input type="text" id="rrNumber" />
-
-                            <br>
-
-                            <label for="hallconNumber">Hallcon #</label>
-                            <input type="text" id="hallconNumber" />
-
-                            <br>
-
-                            <label for="tripType">Trip Type</label>
-                            <input type="text" id="tripType" />
-
-                            <br>
-
-                            <label for="crewNames">Crew Names</label>
-                            <input type="text" id="crewNames" />
-
-                            <br>
-
-                            <label for="destination">Destination</label>
-                            <input type="text" id="destination" />
-
-                            <br>
-
-                            <label for="dispatcher">Dispatcher #</label>
-                            <input type="text" id="dispatcher" />
-                        </section>
-
-                        <hr>
-
-                        <!-- Stops -->
-                        <section class="card">
-                            <h2>Stops W/ Crew</h2>
-
+                        <!-- STOPS TABLE -->
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                            <h2 style="margin-bottom: 15px;">📍 Stops With Crew</h2>
                             <div class="table-container">
-                                <table id="stopsTable">
+                                <table id="stopsTable" style="border: 2px solid #000;">
                                     <thead>
-                                        <tr>
-                                            <th>Stop #</th>
-                                            <th>Times</th>
-                                            <th>Location</th>
-                                            <th>Odometer</th>
-                                            <th>Why?</th>
-                                            <th>Wait</th>
+                                        <tr style="background: #e9ecef;">
+                                            <th style="text-align: center; width: 8%;">Stop #</th>
+                                            <th style="text-align: center; width: 15%;">Times</th>
+                                            <th style="text-align: center; width: 25%;">Location</th>
+                                            <th style="text-align: center; width: 12%;">Odometer</th>
+                                            <th style="text-align: center; width: 10%;">Why?</th>
+                                            <th style="text-align: center; width: 10%;">Wait (min)</th>
+                                            <th style="text-align: center; width: 10%;">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="stop-number">1</td>
-                                            <td><input type="text" class="stop-times" placeholder="HHMM-HHMM"></td>
-                                            <td><input type="text" class="stop-location"></td>
-                                            <td><input type="text" class="stop-odometer"></td>
-                                            <td><input type="text" class="stop-why" maxlength="4"></td>
-                                            <td><input type="number" class="stop-wait" value="0"></td>
+                                            <td style="text-align: center; font-weight: bold;" class="stop-number">1</td>
+                                            <td><input type="text" class="stop-times" placeholder="HHMM-HHMM" style="text-align: center;"></td>
+                                            <td><input type="text" class="stop-location" placeholder="Street address / cross streets" style="width: 100%;"></td>
+                                            <td><input type="text" class="stop-odometer" placeholder="00000" style="text-align: center;"></td>
+                                            <td><input type="text" class="stop-why" maxlength="4" placeholder="Code" style="text-align: center;"></td>
+                                            <td><input type="number" class="stop-wait" value="0" style="text-align: center; width: 80px;"></td>
+                                            <td style="text-align: center;">
+                                                <button type="button" class="remove-stop-btn" style="background: #dc3545; padding: 5px 10px;">✖</button>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-
-                            <div class="stop-buttons">
-                                <button type="button" id="addStopRow">Add Stop</button>
-                                <button type="button" id="removeStopRow">Remove Stop</button>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                                <button type="button" id="addStopRow" style="background: #28a745;">+ Add Stop</button>
+                                <button type="button" id="removeStopRow" style="background: #dc3545;">− Remove Last Stop</button>
                             </div>
+                        </div>
 
-                            <br>
-
-                            <h3>Notes/Approvals</h3>
-                            <textarea id="notes" placeholder="Add Your Notes/Approvals Here..."></textarea>
-                        </section>
-
-                        <hr>
-
-                        <!-- End of Trip -->
-                        <section class="card">
-                            <h2>End of Trip</h2>
-
-                            <label for="dropcrewOdometer">Drop Crew Odometer</label>
-                            <input type="number" id="dropcrewOdometer" required />
-
-                            <br>
-
-                            <label for="dropcrewTime">Drop Crew Time</label>
-                            <input type="text" id="dropcrewTime" required />
-
-                            <div class="summary-row">
-                                <div><strong>Total Miles:</strong> <span id="totalMiles">0</span></div>
-                                <div><strong>Total Wait:</strong> <span id="totalWait">0</span></div>
+                        <!-- END OF TRIP SECTION -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px; background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                            <div>
+                                <label><strong>Drop Crew Odometer</strong></label>
+                                <input type="number" id="dropcrewOdometer" required placeholder="00000" />
                             </div>
+                            <div>
+                                <label><strong>Drop Crew Time</strong></label>
+                                <input type="text" id="dropcrewTime" required placeholder="HHMM" />
+                            </div>
+                            <div>
+                                <label><strong>Clock In (Van PU)</strong></label>
+                                <input type="text" id="clockIn" required placeholder="HHMM" />
+                            </div>
+                            <div>
+                                <label><strong>Clock Out (Van DO)</strong></label>
+                                <input type="text" id="clockOut" required placeholder="HHMM" />
+                            </div>
+                            <div style="background: #e9ecef; padding: 10px; border-radius: 4px;">
+                                <strong>Total Miles:</strong> <span id="totalMiles" style="font-size: 1.2em; margin-left: 10px;">0</span>
+                            </div>
+                            <div style="background: #e9ecef; padding: 10px; border-radius: 4px;">
+                                <strong>Total Wait:</strong> <span id="totalWait" style="font-size: 1.2em; margin-left: 10px;">0</span>
+                            </div>
+                        </div>
 
-                            <hr>
+                        <!-- NOTES -->
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                            <label><strong>📝 Notes / Approvals</strong></label>
+                            <textarea id="notes" placeholder="Add notes, approvals, special instructions here..." rows="3" style="width: 100%; margin-top: 10px; padding: 10px;"></textarea>
+                        </div>
 
-                            <label for="clockIn">Clock In (Van PU Time)</label>
-                            <input type="text" id="clockIn" required />
-
-                            <br>
-
-                            <label for="clockOut">Clock Out (Van DO Time)</label>
-                            <input type="text" id="clockOut" required />
-                        </section>
-
-                        <div class="button-row">
-    <button type="submit" id="submitTrip">Submit Trip</button>
-    <button type="button" id="previewTrip">Preview Trip Sheet</button>
+                        <!-- ACTION BUTTONS -->
+                        <div class="button-row" style="display: flex; gap: 15px; justify-content: flex-end;">
+                            <button type="submit" id="submitTrip" style="background: #0077cc; padding: 12px 24px;">📤 Submit Trip</button>
+                            <button type="button" id="previewTrip" style="background: #6c757d; padding: 12px 24px;">🖨️ Print Preview</button>
+                            <button type="button" id="clearFormBtn" style="background: #6c757d; padding: 12px 24px;">🧹 Clear Form</button>
                         </div>
 
                         <p id="tripMessage" class="status-message"></p>
                     </form>
                 </section>
-
-                <!-- Database -->
-                <section class="view hidden" id="view-database">
-                    <h1>Database View</h1>
-                    <p>Manager-only trip database (to be expanded).</p>
-
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Driver</th>
-                                    <th>Vehicle</th>
-                                    <th>Miles</th>
-                                    <th>Wait</th>
-                                </tr>
-                            </thead>
-                            <tbody id="databaseBody"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Spreadsheet -->
-                <section class="view hidden" id="view-spreadsheet">
-                    <h1>Spreadsheet Workspace</h1>
-                    <p>Manager-only spreadsheet-style interface (to be expanded).</p>
-                    <div id="spreadsheetContainer" class="card"></div>
-                </section>
-
             </main>
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Print Guide Modal -->
+    <div id="printGuideModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 600px; margin: 50px auto;">
+            <h2 style="margin-bottom: 20px;">🖨️ Print-Ready Preview Guide</h2>
+            <div style="margin-bottom: 25px;">
+                <p style="margin-bottom: 15px;"><strong>Your trip sheet preview is already print-ready:</strong></p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 12px; display: flex; align-items: center;">✅ &nbsp; All cells centered</li>
+                    <li style="margin-bottom: 12px; display: flex; align-items: center;">✅ &nbsp; Evenly spaced columns</li>
+                    <li style="margin-bottom: 12px; display: flex; align-items: center;">✅ &nbsp; Clean borders</li>
+                    <li style="margin-bottom: 12px; display: flex; align-items: center;">✅ &nbsp; Print-friendly layout</li>
+                </ul>
+            </div>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                <p><strong>Print Instructions:</strong></p>
+                <p>1. Click "Print Preview" button</p>
+                <p>2. Right-click on the preview → Print</p>
+                <p>3. Or use Ctrl+P (Cmd+P on Mac)</p>
+            </div>
+            <button onclick="document.getElementById('printGuideModal').style.display='none'" style="background: #0077cc; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Got it</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
