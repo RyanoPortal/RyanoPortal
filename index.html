@@ -41,7 +41,11 @@
                 <label for="tripType">Trip Type</label>
                 <input type="text" id="tripType">
             </div>
-
+            <div>
+                <label for="startOdometer">Start Odometer</label>
+                <input type="number" id="startOdometer">
+            </div>
+<hr>
             <div>
                 <label for="rrNumber">RR #</label>
                 <input type="text" id="rrNumber">
@@ -66,36 +70,78 @@
                 <label for="destination">Destination</label>
                 <input type="text" id="destination">
             </div>
-
-            <div>
-                <label for="startOdometer">Start Odometer</label>
-                <input type="number" id="startOdometer">
-            </div>
-
-        </div>
-
+<hr>
         <!-- TABLE -->
-        <h3 style="margin-top:2rem;">Stops</h3>
+<h3 style="margin-top:2rem;">Stops W/ Crew</h3>
 
-        <div class="table-wrapper">
-            <table id="stopsTable">
-                <thead>
-                    <tr>
-                        <th>Stop #</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Odometer</th>
-                        <th>Why?</th>
-                        <th>Wait (min)</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="stopsBody"></tbody>
-            </table>
-        </div>
+<div class="table-wrapper">
+    <table id="stopsTable">
+        <thead>
+            <tr>
+                <th>Stop #</th>
+                <th>Times</th>
+                <th>Location</th>
+                <th>Odometer</th>
+                <th>Why?</th>
+                <th>Wait (min)</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
+        <tbody id="stopsBody">
+            <tr>
+                <td class="stop-number">1</td>
+
+                <td>
+                    <input type="text" class="stop-times" placeholder="HHMM-HHMM">
+                </td>
+
+                <td>
+                    <input type="text" class="stop-location">
+                </td>
+
+                <td>
+                    <input type="text" class="stop-odometer">
+                </td>
+
+                <td>
+                    <input type="text" class="stop-why" maxlength="4">
+                </td>
+
+                <td>
+                    <input type="number" class="stop-wait" value="0">
+                </td>
+
+                <td>
+                    <button type="button" class="remove-stop-btn">Remove</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
         <button id="addStopRow">Add Stop</button>
         <button id="removeStopRow">Remove Last Stop</button>
+<hr>
+<div>
+                <label for="EOTTIME">EOT Time</label>
+                <input type="text" id="EOTTIME">
+            </div>
+
+            <div>
+                <label for="EOTODO">EOT Odometer</label>
+                <input type="number" id="EOTODO">
+            </div>
+
+            <div>
+                <label for="TOTALWAIT">Total Wait</label>
+                <input type="text" id="TOTALWAIT">
+            </div>
+
+            <div>
+                <label for="TOTALMILES">Total Miles</label>
+                <input type="number" id="TOTALMILES">
+            </div>
+            <hr>
 
         <div style="margin-top:2rem;">
             <button id="submitTrip">Submit Trip</button>
