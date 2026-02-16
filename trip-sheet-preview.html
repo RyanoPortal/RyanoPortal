@@ -156,42 +156,21 @@
         .no-print button:hover {
             background: #005fa3;
         }
-        
-        /* SIGNATURE LINE */
-        .signature-line {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            border-top: 1px solid black;
-            padding-top: 20px;
-        }
-        
-        /* TOTAL BOXES */
-        .total-box {
-            border: 2px solid black;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        .total-value {
-            font-size: 20px;
-            margin-top: 5px;
-        }
     </style>
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()">🖨️ Print</button>
-        <button onclick="window.close()">✖ Close</button>
+        <button onclick="window.print()">Print</button>
+        <button onclick="window.close()">Close</button>
     </div>
 
     <div class="trip-sheet">
-        <h1>RYANO TRANSPORTATION TRIP SHEET</h1>
-   
-        <!-- DRIVER INFO - 4 COLUMN GRID -->
+        <h1>OFFICIAL TRIP SHEET</h1>
+        
+        <!-- DRIVER INFO SECTION -->
+        <h3 style="margin: 20px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">DRIVER INFO</h3>
         <div class="grid-4">
-            </div>
+            <div>
                 <div class="field-label">Driver Name</div>
                 <div class="field-value" id="previewDriverName">-</div>
             </div>
@@ -204,12 +183,13 @@
                 <div class="field-value" id="previewVanId">-</div>
             </div>
             <div>
-                <div class="field-label">Trip Type</div>
-                <div class="field-value" id="previewTripType">-</div>
+                <div class="field-label">Start Odometer</div>
+                <div class="field-value" id="previewStartOdometer">-</div>
             </div>
         </div>
         
-        <!-- TRIP DETAILS - 3 COLUMN GRID -->
+        <!-- CREW INFO SECTION -->
+        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">CREW INFO</h3>
         <div class="grid-3">
             <div>
                 <div class="field-label">RR #</div>
@@ -220,35 +200,34 @@
                 <div class="field-value" id="previewHallconNumber">-</div>
             </div>
             <div>
-                <div class="field-label">Dispatcher #</div>
-                <div class="field-value" id="previewDispatcher">-</div>
-            </div>
-            <div>
                 <div class="field-label">Crew Names</div>
                 <div class="field-value" id="previewCrewNames">-</div>
+            </div>
+            <div>
+                <div class="field-label">Trip Type</div>
+                <div class="field-value" id="previewTripType">-</div>
             </div>
             <div>
                 <div class="field-label">Destination</div>
                 <div class="field-value" id="previewDestination">-</div>
             </div>
             <div>
-                <div class="field-label">Start Odometer</div>
-                <div class="field-value" id="previewStartOdometer">-</div>
+                <div class="field-label">Dispatcher</div>
+                <div class="field-value" id="previewDispatcher">-</div>
             </div>
         </div>
         
-        <!-- STOPS TABLE - PERFECT CENTERING -->
-        <h2 style="text-align: center; margin: 25px 0 15px;">📍 STOPS WITH CREW</h2>
+        <!-- STOPS W/ CREW SECTION -->
+        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">STOPS W/ CREW</h3>
         <table id="previewStopsTable">
             <thead>
                 <tr>
-                    <th width="8%">#</th>
-                    <th width="17%">TIMES</th>
-                    <th width="30%">LOCATION</th>
+                    <th width="5%">#</th>
+                    <th width="25%">TIMES</th>
+                    <th width="35%">LOCATION</th>
                     <th width="15%">ODOMETER</th>
-                    <th width="10%">WHY?</th>
-                    <th width="10%">WAIT</th>
-                    <th width="10%">SIGN</th>
+                    <th width="8%">WHY</th>
+                    <th width="12%">WAIT</th>
                 </tr>
             </thead>
             <tbody id="previewStopsBody">
@@ -256,43 +235,46 @@
             </tbody>
         </table>
         
-        <!-- END OF TRIP - 4 COLUMN GRID -->
+        <!-- NOTES -->
+        <div class="notes-section">
+            <div class="field-label" style="text-align: left;">NOTES</div>
+            <div class="notes-content" id="previewNotes"></div>
+        </div>
+        
+        <!-- DROP CREW SECTION -->
+        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">DROP CREW SECTION</h3>
         <div class="grid-4">
             <div>
-                <div class="field-label">Drop Crew Odometer</div>
-                <div class="field-value" id="previewEndOdometer">-</div>
-            </div>
-            <div>
-                <div class="field-label">Drop Crew Time</div>
+                <div class="field-label">DoC Time</div>
                 <div class="field-value" id="previewDropCrewTime">-</div>
             </div>
             <div>
-                <div class="field-label">Clock In</div>
+                <div class="field-label">DoC Odometer</div>
+                <div class="field-value" id="previewEndOdometer">-</div>
+            </div>
+            <div>
+                <div class="field-label">Total Wait (Min)</div>
+                <div class="field-value" id="previewTotalWait">0</div>
+            </div>
+            <div>
+                <div class="field-label">Total Miles</div>
+                <div class="field-value" id="previewTotalMiles">0</div>
+            </div>
+        </div>
+        
+        <!-- TIME CLOCK SECTION -->
+        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">TIME CLOCK</h3>
+        <div class="grid-4">
+            <div>
+                <div class="field-label">Clock In Time</div>
                 <div class="field-value" id="previewClockIn">-</div>
             </div>
             <div>
-                <div class="field-label">Clock Out</div>
+                <div class="field-label">Clock Out Time</div>
                 <div class="field-value" id="previewClockOut">-</div>
             </div>
         </div>
-        
-        <!-- TOTALS - SIDE BY SIDE -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
-            <div class="total-box">
-                <div>TOTAL MILES</div>
-                <div class="total-value" id="previewTotalMiles">0</div>
-            </div>
-            <div class="total-box">
-                <div>TOTAL WAIT</div>
-                <div class="total-value" id="previewTotalWait">0</div>
-            </div>
-        </div>
-        
-        <!-- NOTES -->
-        <div class="notes-section">
-            <div class="field-label" style="text-align: left;">NOTES / APPROVALS</div>
-            <div class="notes-content" id="previewNotes"></div>
-        </div>
+    </div>
 
     <script>
         function loadPreview() {
@@ -325,28 +307,23 @@
                 document.getElementById('previewDestination').textContent = trip.destination || '-';
                 document.getElementById('previewStartOdometer').textContent = trip.startOdometer || '-';
                 
-                // Stops table
-                const stopsBody = document.getElementById('previewStopsBody');
-                stopsBody.innerHTML = '';
-
-                // Notes
-                document.getElementById('previewNotes').textContent = trip.notes || 'No notes recorded';
-
-
                 // End of trip
                 document.getElementById('previewEndOdometer').textContent = trip.dropcrewOdometer || '-';
                 document.getElementById('previewDropCrewTime').textContent = trip.dropcrewTime || '-';
-                <br>
-                <hr>
-                document.getElementById('previewTotalMiles').textContent = trip.totalMiles || '0';
-                document.getElementById('previewTotalWait').textContent = trip.totalWait || '0';
-
-
-                
-                // Time Clock
                 document.getElementById('previewClockIn').textContent = trip.clockInTime || '-';
                 document.getElementById('previewClockOut').textContent = trip.clockOutTime || '-';
-                                
+                
+                // Totals
+                document.getElementById('previewTotalMiles').textContent = trip.totalMiles || '0';
+                document.getElementById('previewTotalWait').textContent = trip.totalWait || '0';
+                
+                // Notes
+                document.getElementById('previewNotes').textContent = trip.notes || 'No notes recorded';
+                
+                // Stops table
+                const stopsBody = document.getElementById('previewStopsBody');
+                stopsBody.innerHTML = '';
+                
                 if (trip.stops && trip.stops.length > 0) {
                     trip.stops.forEach(stop => {
                         const row = stopsBody.insertRow();
@@ -357,12 +334,11 @@
                             <td style="text-align: center;">${stop.odometer || ''}</td>
                             <td style="text-align: center;">${stop.why || ''}</td>
                             <td style="text-align: center;">${stop.wait || '0'}</td>
-                            <td style="text-align: center;">_____</td>
                         `;
                     });
                 } else {
                     const row = stopsBody.insertRow();
-                    row.innerHTML = '<td colspan="7" style="text-align: center; padding: 20px;">No stops recorded</td>';
+                    row.innerHTML = '<td colspan="6" style="text-align: center; padding: 20px;">No stops recorded</td>';
                 }
                 
             } catch (error) {
