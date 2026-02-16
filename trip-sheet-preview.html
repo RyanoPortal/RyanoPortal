@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trip Sheet - Print Preview</title>
     <style>
         * {
@@ -322,8 +323,8 @@
                 
                 // Basic info
                 document.getElementById('previewDriverName').textContent = trip.driverName || '-';
-                document.getElementById('previewTripDate').textContent = trip.tripDate || '-';
-                document.getElementById('previewVanId').textContent = trip.vanId || '-';
+                document.getElementById('previewTripDate').textContent = trip.tripdate || '-';
+                document.getElementById('previewVanId').textContent = trip.vanID || '-';
                 document.getElementById('previewTripType').textContent = trip.tripType || '-';
                 
                 // Trip details
@@ -335,10 +336,10 @@
                 document.getElementById('previewStartOdometer').textContent = trip.startOdometer || '-';
                 
                 // End of trip
-                document.getElementById('previewEndOdometer').textContent = trip.endOdometer || '-';
-                document.getElementById('previewDropCrewTime').textContent = trip.dropCrewTime || '-';
-                document.getElementById('previewClockIn').textContent = trip.clockIn || '-';
-                document.getElementById('previewClockOut').textContent = trip.clockOut || '-';
+                document.getElementById('previewEndOdometer').textContent = trip.dropcrewOdometer || '-';
+                document.getElementById('previewDropCrewTime').textContent = trip.dropcrewTime || '-';
+                document.getElementById('previewClockIn').textContent = trip.clockInTime || '-';
+                document.getElementById('previewClockOut').textContent = trip.clockOutTime || '-';
                 
                 // Totals
                 document.getElementById('previewTotalMiles').textContent = trip.totalMiles || '0';

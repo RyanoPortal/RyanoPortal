@@ -3,150 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RyanoPortal</title>
+    <title>RyanoPortal - Trip Sheet</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <!-- HEADER -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2>Driver Login</h2>
+            <input type="text" id="employeeId" placeholder="Employee ID">
+            <input type="password" id="password" placeholder="Password">
+            <button id="loginButton">Login</button>
+            <p id="loginError" style="color:red;"></p>
+        </div>
+    </div>
+
     <div id="header">
-        <button id="darkModeToggle">Dark Mode</button>
+        <button id="darkModeToggle">🌓 Theme</button>
+        <span id="userIdLabel"></span>
         <button id="logoutButton">Logout</button>
     </div>
 
-    <!-- TRIP SHEET TITLE -->
     <section>
         <h2 style="text-align:center; margin-bottom:1rem;">Trip Sheet</h2>
 
-        <!-- FORM GRID -->
-        <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-
-            <div>
-                <label for="driverName">Driver Name</label>
-                <input type="text" id="driverName" readonly>
+        <!-- SECTION 1: Driver Info to Start Odometer -->
+        <div class="form-section">
+            <div class="grid">
+                <div>
+                    <label for="driverName">Driver Name</label>
+                    <input type="text" id="driverName" readonly>
+                </div>
+                <div>
+                    <label for="tripDate">Trip Date</label>
+                    <input type="date" id="tripDate">
+                </div>
+                <div>
+                    <label for="vanId">Van ID</label>
+                    <input type="text" id="vanId" placeholder="e.g. 702">
+                </div>
+                <div>
+                    <label for="tripType">Trip Type</label>
+                    <input type="text" id="tripType" placeholder="MDC / ML / HOG">
+                </div>
+                <div class="full-width">
+                    <label for="startOdometer">Start Odometer</label>
+                    <input type="number" id="startOdometer">
+                </div>
             </div>
-
-            <div>
-                <label for="tripDate">Trip Date</label>
-                <input type="date" id="tripDate">
-            </div>
-
-            <div>
-                <label for="vanId">Van ID</label>
-                <input type="text" id="vanId">
-            </div>
-
-            <div>
-                <label for="tripType">Trip Type</label>
-                <input type="text" id="tripType">
-            </div>
-            <div>
-                <label for="startOdometer">Start Odometer</label>
-                <input type="number" id="startOdometer">
-            </div>
-<hr>
-            <div>
-                <label for="rrNumber">RR #</label>
-                <input type="text" id="rrNumber">
-            </div>
-
-            <div>
-                <label for="hallconNumber">Hallcon #</label>
-                <input type="text" id="hallconNumber">
-            </div>
-
-            <div>
-                <label for="dispatcherNumber">Dispatcher #</label>
-                <input type="text" id="dispatcherNumber">
-            </div>
-
-            <div>
-                <label for="crewNames">Crew Names</label>
-                <textarea id="crewNames"></textarea>
-            </div>
-
-            <div>
-                <label for="destination">Destination</label>
-                <input type="text" id="destination">
-            </div>
-<hr>
-        <!-- TABLE -->
-<h3 style="margin-top:2rem;">Stops W/ Crew</h3>
-
-<div class="table-wrapper">
-    <table id="stopsTable">
-        <thead>
-            <tr>
-                <th>Stop #</th>
-                <th>Times</th>
-                <th>Location</th>
-                <th>Odometer</th>
-                <th>Why?</th>
-                <th>Wait (min)</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-
-        <tbody id="stopsBody">
-            <tr>
-                <td class="stop-number">1</td>
-
-                <td>
-                    <input type="text" class="stop-times" placeholder="HHMM-HHMM">
-                </td>
-
-                <td>
-                    <input type="text" class="stop-location">
-                </td>
-
-                <td>
-                    <input type="text" class="stop-odometer">
-                </td>
-
-                <td>
-                    <input type="text" class="stop-why" maxlength="4">
-                </td>
-
-                <td>
-                    <input type="number" class="stop-wait" value="0">
-                </td>
-
-                <td>
-                    <button type="button" class="remove-stop-btn">Remove</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-        <button id="addStopRow">Add Stop</button>
-        <button id="removeStopRow">Remove Last Stop</button>
-<hr>
-<div>
-                <label for="EOTTIME">EOT Time</label>
-                <input type="text" id="EOTTIME">
-            </div>
-
-            <div>
-                <label for="EOTODO">EOT Odometer</label>
-                <input type="number" id="EOTODO">
-            </div>
-
-            <div>
-                <label for="TOTALWAIT">Total Wait</label>
-                <input type="text" id="TOTALWAIT">
-            </div>
-
-            <div>
-                <label for="TOTALMILES">Total Miles</label>
-                <input type="number" id="TOTALMILES">
-            </div>
-            <hr>
-
-        <div style="margin-top:2rem;">
-            <button id="submitTrip">Submit Trip</button>
         </div>
 
+        <div class="section-separator"></div>
+
+        <!-- SECTION 2: RR # to Destination -->
+        <div class="form-section">
+            <div class="grid">
+                <div>
+                    <label for="rrNumber">RR #</label>
+                    <input type="text" id="rrNumber">
+                </div>
+                <div>
+                    <label for="hallconNumber">Hallcon #</label>
+                    <input type="text" id="hallconNumber">
+                </div>
+                <div class="full-width">
+                    <label for="dispatcherNumber">Dispatcher Initials</label>
+                    <input type="text" id="dispatcherNumber">
+                </div>
+                <div class="full-width">
+                    <label for="crewNames">Crew Names</label>
+                    <textarea id="crewNames" rows="2"></textarea>
+                </div>
+                <div class="full-width">
+                    <label for="destination">Destination</label>
+                    <input type="text" id="destination">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-separator"></div>
+
+        <!-- SECTION 3: Stops W/ Crew to Notes -->
+        <div class="form-section">
+            <h3 style="margin: 0 0 1rem 0;">Stops W/ Crew</h3>
+            <div class="table-wrapper">
+                <table id="stopsTable">
+                    <thead>
+                        <tr>
+                            <th width="8%">#</th>
+                            <th width="18%">Time</th>
+                            <th width="28%">Location</th>
+                            <th width="16%">Odo</th>
+                            <th width="12%">Why</th>
+                            <th width="12%">Wait</th>
+                            <th width="6%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="stopsBody">
+                        <tr>
+                            <td class="stop-number">1</td>
+                            <td><input type="text" class="stop-times" placeholder="HH:MM"></td>
+                            <td><input type="text" class="stop-location"></td>
+                            <td><input type="number" class="stop-odometer"></td>
+                            <td><input type="text" class="stop-why" maxlength="4"></td>
+                            <td><input type="number" class="stop-wait" value="0"></td>
+                            <td><button type="button" class="remove-stop-btn">×</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button id="addStopRow" class="add-button">+ Add Stop</button>
+
+            <div style="margin-top: 1rem;">
+                <label for="notes">Notes</label>
+                <textarea id="notes" rows="3" placeholder="Additional notes or comments..."></textarea>
+            </div>
+        </div>
+
+        <div class="section-separator"></div>
+
+        <!-- SECTION 4: EOT Time to Total Miles -->
+        <div class="form-section">
+            <div class="grid">
+                <div>
+                    <label for="EOTTIME">EOT Time (Drop)</label>
+                    <input type="text" id="EOTTIME" placeholder="HH:MM">
+                </div>
+                <div>
+                    <label for="EOTODO">EOT Odometer</label>
+                    <input type="number" id="EOTODO">
+                </div>
+                <div>
+                    <label for="TOTALWAIT">Total Wait (Min)</label>
+                    <input type="text" id="TOTALWAIT" readonly class="readonly-total">
+                </div>
+                <div>
+                    <label for="TOTALMILES">Total Miles</label>
+                    <input type="number" id="TOTALMILES" readonly class="readonly-total">
+                </div>
+            </div>
+        </div>
+
+        <div class="section-separator"></div>
+
+        <!-- SECTION 5: Clock In/Out Times -->
+        <div class="form-section">
+            <div class="grid">
+                <div>
+                    <label for="clockInTime">Clock In Time</label>
+                    <input type="text" id="clockInTime" placeholder="HH:MM">
+                </div>
+                <div>
+                    <label for="clockOutTime">Clock Out Time</label>
+                    <input type="text" id="clockOutTime" placeholder="HH:MM">
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:2rem; display: flex; gap: 10px;">
+            <button onclick="openPreview()" class="preview-button" style="flex: 1;">📄 Preview</button>
+            <button id="submitTrip" class="submit-button" style="flex: 2;">Submit</button>
+        </div>
     </section>
 
     <script src="script.js"></script>

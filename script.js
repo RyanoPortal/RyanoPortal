@@ -1,7 +1,3 @@
-// ======================================================
-// === CONFIGURATION ====================================
-// ======================================================
-
 const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbytDZ27z_nUNRUYgF2dM7xJ9iRR6Cw-RG5Ykvot1hhyRpKgY4suJuhw4Lq4HKm39mXC/exec";
 
 const users = [
@@ -12,244 +8,210 @@ const users = [
     { id: "B Mgr", password: "0516", role: "manager" }
 ];
 
-// ======================================================
-// === STATE ============================================
-// ======================================================
-
 let currentUser = null;
 
-// ======================================================
-// === DOM REFERENCES ===================================
-// ======================================================
-
-const loginOverlay = document.getElementById("login-overlay");
-const loginButton = document.getElementById("loginButton");
-const logoutButton = document.getElementById("logoutButton");
-const loginError = document.getElementById("loginError");
-const employeeIdInput = document.getElementById("employeeId");
-const passwordInput = document.getElementById("password");
-const userIdLabel = document.getElementById("userIdLabel");
-
-const driverNameInput = document.getElementById("driverName");
-const tripDateInput = document.getElementById("tripDate");
-const vanIdInput = document.getElementById("vanId");
-const tripTypeInput = document.getElementById("tripType");
-const startOdometerInput = document.getElementById("startOdometer");
-const rrNumberInput = document.getElementById("rrNumber");
-const hallconNumberInput = document.getElementById("hallconNumber");
-const dispatcherNumberInput = document.getElementById("dispatcherNumber");
-const crewNamesInput = document.getElementById("crewNames");
-const destinationInput = document.getElementById("destination");
-
-const EOTTIME = document.getElementById("EOTTIME");
-const EOTODO = document.getElementById("EOTODO");
-const TOTALWAIT = document.getElementById("TOTALWAIT");
-const TOTALMILES = document.getElementById("TOTALMILES");
-
-const stopsTableBody = document.getElementById("stopsBody");
-
-const addStopRowBtn = document.getElementById("addStopRow");
-const removeStopRowBtn = document.getElementById("removeStopRow");
-const submitTripBtn = document.getElementById("submitTrip");
-
-// ======================================================
-// === INITIALIZATION ===================================
-// ======================================================
-
+// Initialization
 document.addEventListener("DOMContentLoaded", () => {
-    // Auto-fill today's date
-    const today = new Date();
-    tripDateInput.value = today.toISOString().split("T")[0];
-
-    // Restore logged-in user
+    // Check Login
     const savedUser = localStorage.getItem("currentUser");
     if (savedUser) {
         currentUser = JSON.parse(savedUser);
-        driverNameInput.value = currentUser.id;
+        document.getElementById("driverName").value = currentUser.id;
+        document.getElementById("login-overlay").style.display = "none";
     }
 
-    setupRemoveButtons();
+    // Default Date
+    document.getElementById("tripDate").value = new Date().toISOString().split("T")[0];
+
+    // Theme logic
+    if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark-mode");
+    
+    setupEventListeners();
     updateTotals();
 });
 
-// ======================================================
-// === LOGIN ============================================
-// ======================================================
-
-if (loginButton) {
-    loginButton.addEventListener("click", () => {
-        const id = employeeIdInput.value.trim();
-        const pw = passwordInput.value.trim();
-
-        const user = users.find(u => u.id === id && u.password === pw);
-        if (!user) {
-            loginError.textContent = "Invalid ID or password.";
-            return;
-        }
-
-        currentUser = { id: user.id, role: user.role };
-        localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
-        driverNameInput.value = currentUser.id;
-        loginOverlay.style.display = "none";
+function setupEventListeners() {
+    // Theme Toggle
+    document.getElementById("darkModeToggle").addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
     });
-}
 
-if (logoutButton) {
-    logoutButton.addEventListener("click", () => {
-        currentUser = null;
+    // Login
+    document.getElementById("loginButton").addEventListener("click", () => {
+        const id = document.getElementById("employeeId").value;
+        const pw = document.getElementById("password").value;
+        const user = users.find(u => u.id === id && u.password === pw);
+        if (user) {
+            currentUser = user;
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            location.reload();
+        } else {
+            document.getElementById("loginError").textContent = "Invalid Credentials";
+        }
+    });
+
+    // Logout
+    document.getElementById("logoutButton").addEventListener("click", () => {
         localStorage.removeItem("currentUser");
         location.reload();
     });
-}
 
-// ======================================================
-// === STOP ROW MANAGEMENT ===============================
-// ======================================================
+    // Add Row
+    document.getElementById("addStopRow").addEventListener("click", addStopRow);
 
-function setupRemoveButtons() {
-    document.querySelectorAll(".remove-stop-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            if (stopsTableBody.children.length > 1) {
-                this.closest("tr").remove();
-                renumberStops();
-                updateTotals();
-            }
-        });
+    // Calc triggers
+    document.getElementById("startOdometer").addEventListener("input", updateTotals);
+    document.getElementById("EOTODO").addEventListener("input", updateTotals);
+    
+    // Initial row(s) calc - attach listeners to all existing rows
+    document.querySelectorAll("#stopsBody tr").forEach(row => {
+        attachRowListeners(row);
     });
 }
 
-function renumberStops() {
-    [...stopsTableBody.children].forEach((row, i) => {
-        row.querySelector(".stop-number").textContent = i + 1;
-    });
-}
-
-addStopRowBtn.addEventListener("click", () => {
+function addStopRow() {
+    const tbody = document.getElementById("stopsBody");
     const row = document.createElement("tr");
-    const num = stopsTableBody.children.length + 1;
-
     row.innerHTML = `
-        <td class="stop-number">${num}</td>
-        <td><input type="text" class="stop-times" placeholder="HHMM-HHMM"></td>
+        <td class="stop-number">${tbody.children.length + 1}</td>
+        <td><input type="text" class="stop-times"></td>
         <td><input type="text" class="stop-location"></td>
-        <td><input type="text" class="stop-odometer"></td>
+        <td><input type="number" class="stop-odometer"></td>
         <td><input type="text" class="stop-why" maxlength="4"></td>
         <td><input type="number" class="stop-wait" value="0"></td>
-        <td><button type="button" class="remove-stop-btn">Remove</button></td>
+        <td><button type="button" class="remove-stop-btn">X</button></td>
     `;
+    tbody.appendChild(row);
+    attachRowListeners(row);
+}
 
-    stopsTableBody.appendChild(row);
-
-    row.querySelector(".remove-stop-btn").addEventListener("click", () => {
-        if (stopsTableBody.children.length > 1) {
+function attachRowListeners(row) {
+    const waitInput = row.querySelector(".stop-wait");
+    const removeBtn = row.querySelector(".remove-stop-btn");
+    
+    if (waitInput) {
+        waitInput.addEventListener("input", updateTotals);
+    }
+    
+    if (removeBtn) {
+        removeBtn.addEventListener("click", () => {
             row.remove();
             renumberStops();
             updateTotals();
-        }
-    });
-
-    row.querySelector(".stop-wait").addEventListener("input", updateTotals);
-});
-
-removeStopRowBtn.addEventListener("click", () => {
-    if (stopsTableBody.children.length > 1) {
-        stopsTableBody.lastElementChild.remove();
-        renumberStops();
-        updateTotals();
+        });
     }
-});
+}
 
-// ======================================================
-// === TOTALS ===========================================
-// ======================================================
+function renumberStops() {
+    document.querySelectorAll(".stop-number").forEach((td, i) => td.textContent = i + 1);
+}
 
 function updateTotals() {
-    // Total Wait
+    // Sum Wait Times
     let totalWait = 0;
     document.querySelectorAll(".stop-wait").forEach(input => {
         totalWait += parseFloat(input.value) || 0;
     });
-    TOTALWAIT.value = totalWait;
+    document.getElementById("TOTALWAIT").value = totalWait;
 
-    // Total Miles
-    const start = parseFloat(startOdometerInput.value) || 0;
-    const end = parseFloat(EOTODO.value) || 0;
-    const miles = end - start;
-    TOTALMILES.value = miles > 0 ? miles : 0;
+    // Calc Miles
+    const start = parseFloat(document.getElementById("startOdometer").value) || 0;
+    const end = parseFloat(document.getElementById("EOTODO").value) || 0;
+    const diff = end - start;
+    document.getElementById("TOTALMILES").value = diff > 0 ? diff : 0;
 }
 
-startOdometerInput.addEventListener("input", updateTotals);
-EOTODO.addEventListener("input", updateTotals);
-stopsTableBody.addEventListener("input", e => {
-    if (e.target.classList.contains("stop-wait")) updateTotals();
-});
-
-// ======================================================
-// === COLLECT STOPS ====================================
-// ======================================================
-
-function collectStops() {
+// Submit to Google
+document.getElementById("submitTrip").addEventListener("click", async () => {
+    if (!currentUser) return alert("Login first");
+    
     const stops = [];
-    [...stopsTableBody.children].forEach((row, i) => {
+    document.querySelectorAll("#stopsBody tr").forEach((row, i) => {
         stops.push({
             index: i + 1,
-            times: row.querySelector(".stop-times").value.trim(),
-            location: row.querySelector(".stop-location").value.trim(),
-            odometer: row.querySelector(".stop-odometer").value.trim(),
-            why: row.querySelector(".stop-why").value.trim(),
-            wait: parseFloat(row.querySelector(".stop-wait").value) || 0
+            times: row.querySelector(".stop-times").value,
+            location: row.querySelector(".stop-location").value,
+            odometer: row.querySelector(".stop-odometer").value,
+            why: row.querySelector(".stop-why").value,
+            wait: row.querySelector(".stop-wait").value
         });
     });
-    return stops;
-}
-
-// ======================================================
-// === SUBMIT TRIP ======================================
-// ======================================================
-
-submitTripBtn.addEventListener("click", async () => {
-    if (!currentUser) {
-        alert("Please login first.");
-        return;
-    }
 
     const trip = {
-        driverName: driverNameInput.value.trim(),
-        tripdate: tripDateInput.value.trim(),       // KEEP OLD BACKEND NAME
-        vanID: vanIdInput.value.trim(),             // KEEP OLD BACKEND NAME
-        tripType: tripTypeInput.value.trim(),
-        startOdometer: startOdometerInput.value.trim(),
-        rrNumber: rrNumberInput.value.trim(),
-        hallconNumber: hallconNumberInput.value.trim(),
-        dispatcher: dispatcherNumberInput.value.trim(), // KEEP OLD BACKEND NAME
-        crewNames: crewNamesInput.value.trim(),
-        destination: destinationInput.value.trim(),
-        stops: collectStops(),
-        dropcrewOdometer: EOTODO.value.trim(),      // KEEP OLD BACKEND NAME
-        dropcrewTime: EOTTIME.value.trim(),         // KEEP OLD BACKEND NAME
-        totalMiles: TOTALMILES.value.trim(),
-        totalWait: TOTALWAIT.value.trim(),
-        submittedAt: new Date().toISOString()
+        driverName: document.getElementById("driverName").value,
+        tripdate: document.getElementById("tripDate").value,
+        vanID: document.getElementById("vanId").value,
+        tripType: document.getElementById("tripType").value,
+        startOdometer: document.getElementById("startOdometer").value,
+        rrNumber: document.getElementById("rrNumber").value,
+        hallconNumber: document.getElementById("hallconNumber").value,
+        dispatcher: document.getElementById("dispatcherNumber").value,
+        crewNames: document.getElementById("crewNames").value,
+        destination: document.getElementById("destination").value,
+        stops: stops,
+        notes: document.getElementById("notes").value,
+        dropcrewOdometer: document.getElementById("EOTODO").value,
+        dropcrewTime: document.getElementById("EOTTIME").value,
+        totalMiles: document.getElementById("TOTALMILES").value,
+        totalWait: document.getElementById("TOTALWAIT").value,
+        clockInTime: document.getElementById("clockInTime").value,
+        clockOutTime: document.getElementById("clockOutTime").value
     };
 
-    if (!trip.driverName || !trip.tripdate || !trip.vanID) {
-        alert("Driver Name, Trip Date, and Van ID are required.");
-        return;
-    }
+    // Save to localStorage for preview
+    localStorage.setItem('lastTrip', JSON.stringify(trip));
 
     try {
         await fetch(SHEETS_WEB_APP_URL, {
             method: "POST",
             mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ mode: "appendTrip", trip })
         });
-
-        alert("Trip submitted successfully!");
-
-    } catch (err) {
-        console.error(err);
-        alert("Error submitting trip.");
+        alert("Submitted Successfully!");
+    } catch (e) {
+        alert("Error submitting. Check connection.");
     }
 });
+
+// Preview button functionality
+function openPreview() {
+    const stops = [];
+    document.querySelectorAll("#stopsBody tr").forEach((row, i) => {
+        stops.push({
+            index: i + 1,
+            times: row.querySelector(".stop-times").value,
+            location: row.querySelector(".stop-location").value,
+            odometer: row.querySelector(".stop-odometer").value,
+            why: row.querySelector(".stop-why").value,
+            wait: row.querySelector(".stop-wait").value
+        });
+    });
+
+    const trip = {
+        driverName: document.getElementById("driverName").value,
+        tripdate: document.getElementById("tripDate").value,
+        vanID: document.getElementById("vanId").value,
+        tripType: document.getElementById("tripType").value,
+        startOdometer: document.getElementById("startOdometer").value,
+        rrNumber: document.getElementById("rrNumber").value,
+        hallconNumber: document.getElementById("hallconNumber").value,
+        dispatcher: document.getElementById("dispatcherNumber").value,
+        crewNames: document.getElementById("crewNames").value,
+        destination: document.getElementById("destination").value,
+        stops: stops,
+        notes: document.getElementById("notes").value,
+        dropcrewOdometer: document.getElementById("EOTODO").value,
+        dropcrewTime: document.getElementById("EOTTIME").value,
+        totalMiles: document.getElementById("TOTALMILES").value,
+        totalWait: document.getElementById("TOTALWAIT").value,
+        clockInTime: document.getElementById("clockInTime").value,
+        clockOutTime: document.getElementById("clockOutTime").value
+    };
+
+    // Save to localStorage
+    localStorage.setItem('lastTrip', JSON.stringify(trip));
+    
+    // Open preview in new window
+    window.open('trip-sheet-preview.html', '_blank', 'width=1200,height=800');
+}
