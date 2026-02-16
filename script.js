@@ -169,10 +169,50 @@ document.getElementById("submitTrip").addEventListener("click", async () => {
             body: JSON.stringify({ mode: "appendTrip", trip })
         });
         alert("Submitted Successfully!");
+        
+        // Clear the form after successful submission
+        clearForm();
     } catch (e) {
         alert("Error submitting. Check connection.");
     }
 });
+
+// Clear form function
+function clearForm() {
+    // Clear all text inputs except driver name and date
+    document.getElementById("vanId").value = "";
+    document.getElementById("tripType").value = "";
+    document.getElementById("startOdometer").value = "";
+    document.getElementById("rrNumber").value = "";
+    document.getElementById("hallconNumber").value = "";
+    document.getElementById("dispatcherNumber").value = "";
+    document.getElementById("crewNames").value = "";
+    document.getElementById("destination").value = "";
+    document.getElementById("notes").value = "";
+    document.getElementById("EOTODO").value = "";
+    document.getElementById("EOTTIME").value = "";
+    document.getElementById("TOTALWAIT").value = "0";
+    document.getElementById("TOTALMILES").value = "0";
+    document.getElementById("clockInTime").value = "";
+    document.getElementById("clockOutTime").value = "";
+    
+    // Clear all stops except the first one
+    const stopsBody = document.getElementById("stopsBody");
+    while (stopsBody.children.length > 1) {
+        stopsBody.removeChild(stopsBody.lastChild);
+    }
+    
+    // Clear the first stop row
+    const firstRow = stopsBody.children[0];
+    firstRow.querySelector(".stop-times").value = "";
+    firstRow.querySelector(".stop-location").value = "";
+    firstRow.querySelector(".stop-odometer").value = "";
+    firstRow.querySelector(".stop-why").value = "";
+    firstRow.querySelector(".stop-wait").value = "0";
+    
+    // Reset date to today
+    document.getElementById("tripDate").value = new Date().toISOString().split("T")[0];
+}
 
 // Preview button functionality
 function openPreview() {

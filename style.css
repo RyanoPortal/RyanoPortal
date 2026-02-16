@@ -118,14 +118,14 @@ input:focus, textarea:focus {
 }
 
 .readonly-total { 
-    background-color: #e8f5e9; 
-    color: #2e7d32; 
+    background-color: #7ef08763; 
+    color: #000000; 
     font-weight: bold; 
 }
 
 body.dark-mode .readonly-total {
-    background-color: #1b5e20;
-    color: #a5d6a7;
+    background-color: #1b5e1f70;
+    color: #ffffff;
 }
 
 .table-wrapper { 
