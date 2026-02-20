@@ -4,171 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trip Sheet - Print Preview</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        body {
-            font-family: 'Courier New', monospace;
-            background: white;
-            color: black;
-            padding: 30px;
-            line-height: 1.4;
-        }
-        
-        /* PRINT OPTIMIZATION */
-        @media print {
-            body { padding: 0.5in; }
-            .no-print { display: none !important; }
-            button { display: none !important; }
-        }
-        
-        .trip-sheet {
-            max-width: 1200px;
-            margin: 0 auto;
-            border: 2px solid black;
-            padding: 20px;
-        }
-        
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            border-bottom: 2px solid black;
-            padding-bottom: 10px;
-        }
-        
-        /* GRID LAYOUTS */
-        .grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-            border: 1px solid black;
-            padding: 15px;
-        }
-        
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-            border: 1px solid black;
-            padding: 15px;
-        }
-        
-        .grid-6 {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-            border: 1px solid black;
-            padding: 15px;
-        }
-        
-        /* TABLE STYLES - PERFECT FOR PRINT */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 15px 0;
-            border: 2px solid black;
-        }
-        
-        th {
-            background: #f0f0f0;
-            border: 1px solid black;
-            padding: 12px 8px;
-            text-align: center;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 14px;
-        }
-        
-        td {
-            border: 1px solid black;
-            padding: 10px 8px;
-            text-align: center;
-            vertical-align: middle;
-        }
-        
-        /* ALL CELLS CENTERED */
-        .centered {
-            text-align: center;
-        }
-        
-        /* FIELD LABELS */
-        .field-label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            text-align: center;
-            text-transform: uppercase;
-            font-size: 12px;
-        }
-        
-        .field-value {
-            text-align: center;
-            font-size: 16px;
-            padding: 8px;
-            background: #fafafa;
-            border: 1px solid #ccc;
-        }
-        
-        /* NOTES SECTION */
-        .notes-section {
-            border: 1px solid black;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        
-        .notes-content {
-            min-height: 80px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-            text-align: left;
-        }
-        
-        /* BUTTONS - SCREEN ONLY */
-        .no-print {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 10px;
-            z-index: 9999;
-        }
-        
-        .no-print button {
-            padding: 12px 24px;
-            background: #0077cc;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        
-        .no-print button:hover {
-            background: #005fa3;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="preview-page">
     <div class="no-print">
-        <button onclick="window.print()">Print</button>
+        <button onclick="downloadPDF()">Download PDF</button>
         <button onclick="window.close()">Close</button>
     </div>
 
     <div class="trip-sheet">
         <h1>OFFICIAL TRIP SHEET</h1>
         
-        <!-- DRIVER INFO SECTION -->
-        <h3 style="margin: 20px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">DRIVER INFO</h3>
+        <!-- DRIVER INFO -->
+        <h3>Driver Info</h3>
         <div class="grid-4">
             <div>
                 <div class="field-label">Driver Name</div>
@@ -179,7 +27,7 @@
                 <div class="field-value" id="previewTripDate">-</div>
             </div>
             <div>
-                <div class="field-label">Van ID</div>
+                <div class="field-label">Van Id</div>
                 <div class="field-value" id="previewVanId">-</div>
             </div>
             <div>
@@ -188,8 +36,8 @@
             </div>
         </div>
         
-        <!-- CREW INFO SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">CREW INFO</h3>
+        <!-- CREW INFO -->
+        <h3>Crew Info</h3>
         <div class="grid-3">
             <div>
                 <div class="field-label">RR #</div>
@@ -217,8 +65,8 @@
             </div>
         </div>
         
-        <!-- STOPS W/ CREW SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">STOPS W/ CREW</h3>
+        <!-- STOPS W/ CREW -->
+        <h3>Stops W/ Crew</h3>
         <table id="previewStopsTable">
             <thead>
                 <tr>
@@ -235,14 +83,14 @@
             </tbody>
         </table>
         
-        <!-- NOTES -->
+        <!-- NOTES (part of Stops section) -->
         <div class="notes-section">
             <div class="field-label" style="text-align: left;">NOTES</div>
             <div class="notes-content" id="previewNotes"></div>
         </div>
         
         <!-- DROP CREW SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">DROP CREW SECTION</h3>
+        <h3>Drop Crew Section</h3>
         <div class="grid-4">
             <div>
                 <div class="field-label">DoC Time</div>
@@ -253,7 +101,7 @@
                 <div class="field-value" id="previewEndOdometer">-</div>
             </div>
             <div>
-                <div class="field-label">Total Wait (Min)</div>
+                <div class="field-label">Total Wait</div>
                 <div class="field-value" id="previewTotalWait">0</div>
             </div>
             <div>
@@ -262,9 +110,10 @@
             </div>
         </div>
         
-        <!-- TIME CLOCK SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">TIME CLOCK</h3>
-        <div class="grid-4">
+        <!-- TIME CLOCK -->
+        <h3>Time Clock</h3>
+        <div class="grid-centered">
+            <div></div>
             <div>
                 <div class="field-label">Clock In Time</div>
                 <div class="field-value" id="previewClockIn">-</div>
@@ -273,6 +122,7 @@
                 <div class="field-label">Clock Out Time</div>
                 <div class="field-value" id="previewClockOut">-</div>
             </div>
+            <div></div>
         </div>
     </div>
 
@@ -345,6 +195,27 @@
                 console.error('Preview error:', error);
                 alert('Error loading preview: ' + error.message);
             }
+        }
+        
+        function downloadPDF() {
+            const raw = localStorage.getItem('lastTrip');
+            let filename = 'trip-sheet.pdf';
+            
+            if (raw) {
+                try {
+                    const trip = JSON.parse(raw);
+                    const rrNumber = trip.rrNumber || 'trip-sheet';
+                    filename = rrNumber.replace(/[^a-z0-9\-_]/gi, '') + '.pdf';
+                } catch (e) {
+                    console.error('Error parsing RR number:', e);
+                }
+            }
+            
+            // Update document title for print dialog
+            document.title = filename.replace('.pdf', '');
+            
+            // Trigger print dialog (user can save as PDF)
+            window.print();
         }
         
         window.onload = loadPreview;
