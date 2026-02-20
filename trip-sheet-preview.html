@@ -26,6 +26,21 @@
             button { display: none !important; }
         }
         
+        /* SCREEN PREVIEW OPTIMIZATION - doesn't affect print */
+        @media screen {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            
+            .grid-centered {
+                grid-template-columns: 1fr 1fr 1fr 1fr !important;
+            }
+        }
+        
         .trip-sheet {
             max-width: 1200px;
             margin: 0 auto;
@@ -43,10 +58,18 @@
             padding-bottom: 10px;
         }
         
+        h3 {
+            background: #5E9868;
+            color: white;
+            padding: 10px;
+            margin: 20px 0 15px 0;
+            border: none;
+        }
+        
         /* GRID LAYOUTS */
         .grid-4 {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             margin-bottom: 20px;
             border: 1px solid black;
@@ -55,7 +78,16 @@
         
         .grid-3 {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            border: 1px solid black;
+            padding: 15px;
+        }
+        
+        .grid-centered {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 20px;
             border: 1px solid black;
@@ -80,8 +112,9 @@
         }
         
         th {
-            background: #f0f0f0;
-            border: 1px solid black;
+            background: #5E9868;
+            color: white;
+            border: 1px solid #5E9868;
             padding: 12px 8px;
             text-align: center;
             font-weight: bold;
@@ -94,6 +127,15 @@
             padding: 10px 8px;
             text-align: center;
             vertical-align: middle;
+        }
+        
+        /* Alternating row colors */
+        tbody tr:nth-child(odd) {
+            background: white;
+        }
+        
+        tbody tr:nth-child(even) {
+            background: #D7E4D8;
         }
         
         /* ALL CELLS CENTERED */
@@ -114,7 +156,7 @@
             text-align: center;
             font-size: 16px;
             padding: 8px;
-            background: #fafafa;
+            background: #D7E4D8;
             border: 1px solid #ccc;
         }
         
@@ -160,17 +202,15 @@
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()">Print</button>
+        <button onclick="downloadPDF()">Download PDF</button>
         <button onclick="window.close()">Close</button>
     </div>
 
     <div class="trip-sheet">
-        <h1>RYANO TRANSPORTATION</h1>
+        <h1>OFFICIAL TRIP SHEET</h1>
         
-        <!-- DRIVER INFO SECTION -->
-        <h3 style="margin: 20px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black; text-align: center;">
-    DRIVER INFO
-</h3>
+        <!-- DRIVER INFO -->
+        <h3>Driver Info</h3>
         <div class="grid-4">
             <div>
                 <div class="field-label">Driver Name</div>
@@ -181,7 +221,7 @@
                 <div class="field-value" id="previewTripDate">-</div>
             </div>
             <div>
-                <div class="field-label">Van ID</div>
+                <div class="field-label">Van Id</div>
                 <div class="field-value" id="previewVanId">-</div>
             </div>
             <div>
@@ -190,8 +230,8 @@
             </div>
         </div>
         
-        <!-- CREW INFO SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">CREW INFO</h3>
+        <!-- CREW INFO -->
+        <h3>Crew Info</h3>
         <div class="grid-3">
             <div>
                 <div class="field-label">RR #</div>
@@ -219,8 +259,8 @@
             </div>
         </div>
         
-        <!-- STOPS W/ CREW SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">STOPS W/ CREW</h3>
+        <!-- STOPS W/ CREW -->
+        <h3>Stops W/ Crew</h3>
         <table id="previewStopsTable">
             <thead>
                 <tr>
@@ -237,14 +277,14 @@
             </tbody>
         </table>
         
-        <!-- NOTES -->
+        <!-- NOTES (part of Stops section) -->
         <div class="notes-section">
             <div class="field-label" style="text-align: left;">NOTES</div>
             <div class="notes-content" id="previewNotes"></div>
         </div>
         
         <!-- DROP CREW SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">DROP CREW SECTION</h3>
+        <h3>Drop Crew Section</h3>
         <div class="grid-4">
             <div>
                 <div class="field-label">DoC Time</div>
@@ -255,7 +295,7 @@
                 <div class="field-value" id="previewEndOdometer">-</div>
             </div>
             <div>
-                <div class="field-label">Total Wait (Min)</div>
+                <div class="field-label">Total Wait</div>
                 <div class="field-value" id="previewTotalWait">0</div>
             </div>
             <div>
@@ -264,9 +304,10 @@
             </div>
         </div>
         
-        <!-- TIME CLOCK SECTION -->
-        <h3 style="margin: 30px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid black;">TIME CLOCK</h3>
-        <div class="grid-4">
+        <!-- TIME CLOCK -->
+        <h3>Time Clock</h3>
+        <div class="grid-centered">
+            <div></div>
             <div>
                 <div class="field-label">Clock In Time</div>
                 <div class="field-value" id="previewClockIn">-</div>
@@ -275,6 +316,7 @@
                 <div class="field-label">Clock Out Time</div>
                 <div class="field-value" id="previewClockOut">-</div>
             </div>
+            <div></div>
         </div>
     </div>
 
@@ -347,6 +389,27 @@
                 console.error('Preview error:', error);
                 alert('Error loading preview: ' + error.message);
             }
+        }
+        
+        function downloadPDF() {
+            const raw = localStorage.getItem('lastTrip');
+            let filename = 'trip-sheet.pdf';
+            
+            if (raw) {
+                try {
+                    const trip = JSON.parse(raw);
+                    const rrNumber = trip.rrNumber || 'trip-sheet';
+                    filename = rrNumber.replace(/[^a-z0-9\-_]/gi, '') + '.pdf';
+                } catch (e) {
+                    console.error('Error parsing RR number:', e);
+                }
+            }
+            
+            // Update document title for print dialog
+            document.title = filename.replace('.pdf', '');
+            
+            // Trigger print dialog (user can save as PDF)
+            window.print();
         }
         
         window.onload = loadPreview;
