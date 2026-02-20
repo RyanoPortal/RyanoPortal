@@ -291,4 +291,8 @@ button:active {
         text-align: center;
         font-weight: bold;
     }
+
+thead th {
+    text-align: center;
+}
 }
