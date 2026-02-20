@@ -292,3 +292,194 @@ button:active {
         font-weight: bold;
     }
 }
+
+/* ============================================ */
+/* TRIP SHEET PREVIEW PAGE STYLES */
+/* ============================================ */
+
+/* These styles apply only to trip-sheet-preview.html */
+body.preview-page {
+    font-family: 'Courier New', monospace;
+    background: white;
+    color: black;
+    padding: 30px;
+    line-height: 1.4;
+}
+
+body.preview-page * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+}
+
+.trip-sheet {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 2px solid black;
+    padding: 20px;
+}
+
+.trip-sheet h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
+}
+
+.trip-sheet h3 {
+    background: #5E9868;
+    color: white;
+    padding: 10px;
+    margin: 20px 0 15px 0;
+    border: none;
+}
+
+/* Preview Grid Layouts */
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+    border: 1px solid black;
+    padding: 15px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+    border: 1px solid black;
+    padding: 15px;
+}
+
+.grid-centered {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+    border: 1px solid black;
+    padding: 15px;
+}
+
+/* Preview Field Styles */
+.field-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.field-value {
+    text-align: center;
+    font-size: 16px;
+    padding: 8px;
+    background: #D7E4D8;
+    border: 1px solid #ccc;
+}
+
+/* Preview Table Styles */
+.trip-sheet table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    border: 2px solid black;
+}
+
+.trip-sheet th {
+    background: #5E9868;
+    color: white;
+    border: 1px solid #5E9868;
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.trip-sheet td {
+    border: 1px solid black;
+    padding: 10px 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.trip-sheet tbody tr:nth-child(odd) {
+    background: white;
+}
+
+.trip-sheet tbody tr:nth-child(even) {
+    background: #D7E4D8;
+}
+
+/* Notes Section */
+.notes-section {
+    border: 1px solid black;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.notes-content {
+    min-height: 80px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    text-align: left;
+}
+
+/* Preview Buttons */
+.no-print {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 9999;
+}
+
+.no-print button {
+    padding: 12px 24px;
+    background: #0077cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.no-print button:hover {
+    background: #005fa3;
+}
+
+/* Print Styles for Preview Page */
+@media print {
+    body.preview-page {
+        padding: 0.5in;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    .trip-sheet h3 {
+        background: #5E9868 !important;
+        color: white !important;
+    }
+    
+    .trip-sheet th {
+        background: #5E9868 !important;
+        color: white !important;
+    }
+    
+    .trip-sheet tbody tr:nth-child(even) {
+        background: #D7E4D8 !important;
+    }
+    
+    .field-value {
+        background: #D7E4D8 !important;
+    }
+}
