@@ -1,10 +1,10 @@
 const SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbytDZ27z_nUNRUYgF2dM7xJ9iRR6Cw-RG5Ykvot1hhyRpKgY4suJuhw4Lq4HKm39mXC/exec";
 
 const users = [
-    { id: "driver1", password: "1234", role: "driver" },
+    { id: "Braden Reshel", password: "8183", role: "driver" },
     { id: "Mike Mike", password: "2024", role: "driver" },
     { id: "Big B", password: "8183", role: "driver" },
-    { id: "manager1", password: "5678", role: "manager" },
+    { id: "Shelly Ryano", password: "5678", role: "manager" },
     { id: "B Mgr", password: "0516", role: "manager" }
 ];
 
