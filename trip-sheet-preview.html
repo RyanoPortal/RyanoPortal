@@ -4,126 +4,316 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trip Sheet - Print Preview</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            color-adjust: exact;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: white;
+            color: black;
+            padding: 30px;
+            line-height: 1.4;
+        }
+        
+        /* Buttons */
+        .no-print {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 9999;
+        }
+        
+        .no-print button {
+            padding: 12px 24px;
+            background: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: sans-serif;
+        }
+        
+        .no-print button:hover {
+            background: #005fa3;
+        }
+        
+        /* Main container */
+        .trip-sheet {
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Driver Name Header */
+        .driver-header {
+            text-align: center;
+            font-size: 38pt;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        /* Boss-style tables */
+        .boss-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px auto;
+            border: 7px solid black;
+            background-color: black;
+        }
+        
+        .boss-table th {
+            background-color: #5e9868;
+            color: #000000;
+            font-size: 40pt;
+            font-weight: bold;
+            padding: 20px 10px;
+            text-align: center;
+            border: 3px solid black;
+        }
+        
+        .boss-table td {
+            background-color: #d7e4d8;
+            color: #000000;
+            font-size: 40pt;
+            font-weight: bold;
+            padding: 20px 10px;
+            text-align: center;
+            border: 3px solid black;
+        }
+        
+        /* Stops table */
+        .stops-header {
+            text-align: center;
+            font-size: 42pt;
+            font-weight: bold;
+            margin: 40px 0 20px 0;
+            text-decoration: underline;
+        }
+        
+        .stops-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            border: 7px solid black;
+            background-color: black;
+        }
+        
+        .stops-table th {
+            background-color: #5e9868;
+            color: #000000;
+            font-size: 28pt;
+            font-weight: bold;
+            padding: 15px 8px;
+            text-align: center;
+            border: 3px solid black;
+        }
+        
+        .stops-table td {
+            background-color: #d7e4d8;
+            color: #000000;
+            font-size: 28pt;
+            font-weight: bold;
+            padding: 12px 8px;
+            text-align: center;
+            border: 3px solid black;
+        }
+        
+        /* Notes section */
+        .notes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px auto;
+            border: 7px solid black;
+            background-color: black;
+        }
+        
+        .notes-table th {
+            background-color: #5e9868;
+            color: #000000;
+            font-size: 40pt;
+            font-weight: bold;
+            padding: 20px;
+            text-align: center;
+            border: 3px solid black;
+        }
+        
+        .notes-table td {
+            background-color: #d7e4d8;
+            color: #000000;
+            font-size: 36pt;
+            font-weight: bold;
+            padding: 30px 20px;
+            text-align: left;
+            border: 3px solid black;
+            min-height: 200px;
+        }
+        
+        /* Drop crew table */
+        .drop-crew-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 40px auto;
+            border: 8px solid black;
+        }
+        
+        .drop-crew-table th {
+            background-color: #5e9868;
+            color: #000000;
+            font-size: 36pt;
+            font-weight: bold;
+            padding: 25px 15px;
+            text-align: center;
+            border: 3px solid black;
+        }
+        
+        .drop-crew-table td {
+            background-color: #d7e4d8;
+            color: #000000;
+            font-size: 36pt;
+            font-weight: bold;
+            padding: 20px 15px;
+            text-align: center;
+            border: 3px solid black;
+        }
+        
+        .separator-row {
+            background-color: #000000;
+            height: 15px;
+        }
+        
+        .separator-row td {
+            background-color: #000000;
+            border: 1px solid black;
+        }
+        
+        @media print {
+            body { 
+                padding: 0.5in; 
+            }
+            
+            .no-print { 
+                display: none !important; 
+            }
+        }
+    </style>
 </head>
-<body class="preview-page">
+<body>
     <div class="no-print">
         <button onclick="downloadPDF()">Download PDF</button>
         <button onclick="window.close()">Close</button>
     </div>
 
     <div class="trip-sheet">
-        <h1>OFFICIAL TRIP SHEET</h1>
+        <!-- Driver Name Header -->
+        <div class="driver-header" id="previewDriverName">DRIVER NAME</div>
         
-        <!-- DRIVER INFO -->
-        <h3>Driver Info</h3>
-        <div class="grid-4">
-            <div>
-                <div class="field-label">Driver Name</div>
-                <div class="field-value" id="previewDriverName">-</div>
-            </div>
-            <div>
-                <div class="field-label">Trip Date</div>
-                <div class="field-value" id="previewTripDate">-</div>
-            </div>
-            <div>
-                <div class="field-label">Van Id</div>
-                <div class="field-value" id="previewVanId">-</div>
-            </div>
-            <div>
-                <div class="field-label">Start Odometer</div>
-                <div class="field-value" id="previewStartOdometer">-</div>
-            </div>
-        </div>
+        <!-- Table 1: Trip Date, Type, Van ID -->
+        <table class="boss-table">
+            <tr>
+                <th>TRIP DATE</th>
+                <th>TRIP TYPE</th>
+                <th>VAN ID</th>
+            </tr>
+            <tr>
+                <td id="previewTripDate">-</td>
+                <td id="previewTripType">-</td>
+                <td id="previewVanId">-</td>
+            </tr>
+        </table>
         
-        <!-- CREW INFO -->
-        <h3>Crew Info</h3>
-        <div class="grid-3">
-            <div>
-                <div class="field-label">RR #</div>
-                <div class="field-value" id="previewRrNumber">-</div>
-            </div>
-            <div>
-                <div class="field-label">Hallcon #</div>
-                <div class="field-value" id="previewHallconNumber">-</div>
-            </div>
-            <div>
-                <div class="field-label">Crew Names</div>
-                <div class="field-value" id="previewCrewNames">-</div>
-            </div>
-            <div>
-                <div class="field-label">Trip Type</div>
-                <div class="field-value" id="previewTripType">-</div>
-            </div>
-            <div>
-                <div class="field-label">Destination</div>
-                <div class="field-value" id="previewDestination">-</div>
-            </div>
-            <div>
-                <div class="field-label">Dispatcher</div>
-                <div class="field-value" id="previewDispatcher">-</div>
-            </div>
-        </div>
+        <!-- Table 2: RR #, Hallcon # -->
+        <table class="boss-table">
+            <tr>
+                <th>RR #</th>
+                <th>Hallcon #</th>
+            </tr>
+            <tr>
+                <td id="previewRrNumber">-</td>
+                <td id="previewHallconNumber">-</td>
+            </tr>
+        </table>
         
-        <!-- STOPS W/ CREW -->
-        <h3>Stops W/ Crew</h3>
-        <table id="previewStopsTable">
+        <!-- Table 3: Names, To, Disp # -->
+        <table class="boss-table">
+            <tr>
+                <th style="width: 28%;">Name(s)</th>
+                <th style="width: 50%;">To?</th>
+                <th style="width: 20%;">Disp #</th>
+            </tr>
+            <tr>
+                <td id="previewCrewNames">-</td>
+                <td id="previewDestination">-</td>
+                <td id="previewDispatcher">-</td>
+            </tr>
+        </table>
+        
+        <!-- Stops Section -->
+        <div class="stops-header">STOPS WITH CREW</div>
+        <table class="stops-table" id="stopsTable">
             <thead>
                 <tr>
-                    <th width="5%">#</th>
-                    <th width="25%">TIMES</th>
-                    <th width="35%">LOCATION</th>
-                    <th width="15%">ODOMETER</th>
-                    <th width="8%">WHY</th>
-                    <th width="12%">WAIT</th>
+                    <th style="width: 8%;">#</th>
+                    <th style="width: 18%;">TIMES</th>
+                    <th style="width: 30%;">LOCATION</th>
+                    <th style="width: 16%;">ODOMETER</th>
+                    <th style="width: 10%;">WHY</th>
+                    <th style="width: 12%;">MIN'S</th>
                 </tr>
             </thead>
             <tbody id="previewStopsBody">
-                <!-- Stops will be inserted here -->
             </tbody>
         </table>
         
-        <!-- NOTES (part of Stops section) -->
-        <div class="notes-section">
-            <div class="field-label" style="text-align: left;">NOTES</div>
-            <div class="notes-content" id="previewNotes"></div>
-        </div>
+        <!-- Notes Section -->
+        <table class="notes-table">
+            <tr>
+                <th>NOTES/APPROVALS</th>
+            </tr>
+            <tr>
+                <td id="previewNotes">-</td>
+            </tr>
+        </table>
         
-        <!-- DROP CREW SECTION -->
-        <h3>Drop Crew Section</h3>
-        <div class="grid-4">
-            <div>
-                <div class="field-label">DoC Time</div>
-                <div class="field-value" id="previewDropCrewTime">-</div>
-            </div>
-            <div>
-                <div class="field-label">DoC Odometer</div>
-                <div class="field-value" id="previewEndOdometer">-</div>
-            </div>
-            <div>
-                <div class="field-label">Total Wait</div>
-                <div class="field-value" id="previewTotalWait">0</div>
-            </div>
-            <div>
-                <div class="field-label">Total Miles</div>
-                <div class="field-value" id="previewTotalMiles">0</div>
-            </div>
-        </div>
-        
-        <!-- TIME CLOCK -->
-        <h3>Time Clock</h3>
-        <div class="grid-centered">
-            <div></div>
-            <div>
-                <div class="field-label">Clock In Time</div>
-                <div class="field-value" id="previewClockIn">-</div>
-            </div>
-            <div>
-                <div class="field-label">Clock Out Time</div>
-                <div class="field-value" id="previewClockOut">-</div>
-            </div>
-            <div></div>
-        </div>
+        <!-- Drop Crew Table -->
+        <table class="drop-crew-table">
+            <tr>
+                <th>DROP CREW TIME</th>
+                <th>DROP CREW ODOMETER</th>
+            </tr>
+            <tr>
+                <td id="previewDropCrewTime">-</td>
+                <td id="previewEndOdometer">-</td>
+            </tr>
+            <tr>
+                <th>TOTAL WAIT</th>
+                <th>TOTAL MILES</th>
+            </tr>
+            <tr>
+                <td id="previewTotalWait">0</td>
+                <td id="previewTotalMiles">0</td>
+            </tr>
+            <tr class="separator-row">
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <th>Clock In (Van PU Time)</th>
+                <th>Clock Out (Van DO Time)</th>
+            </tr>
+            <tr>
+                <td id="previewClockIn">-</td>
+                <td id="previewClockOut">-</td>
+            </tr>
+        </table>
     </div>
 
     <script>
@@ -131,7 +321,7 @@
             const raw = localStorage.getItem('lastTrip');
             if (!raw) {
                 document.body.innerHTML = `
-                    <div style="text-align: center; padding: 50px;">
+                    <div style="text-align: center; padding: 50px; font-family: sans-serif;">
                         <h2>No trip data found</h2>
                         <p>Please create a trip first in the main app.</p>
                         <button onclick="window.close()" style="padding: 10px 20px; margin-top: 20px;">Close</button>
@@ -143,32 +333,22 @@
             try {
                 const trip = JSON.parse(raw);
                 
-                // Basic info
-                document.getElementById('previewDriverName').textContent = trip.driverName || '-';
-                document.getElementById('previewTripDate').textContent = trip.tripdate || '-';
-                document.getElementById('previewVanId').textContent = trip.vanID || '-';
-                document.getElementById('previewTripType').textContent = trip.tripType || '-';
+                // Driver name in header
+                document.getElementById('previewDriverName').textContent = trip.driverName || 'DRIVER NAME';
                 
-                // Trip details
+                // Top table
+                document.getElementById('previewTripDate').textContent = trip.tripdate || '-';
+                document.getElementById('previewTripType').textContent = trip.tripType || '-';
+                document.getElementById('previewVanId').textContent = trip.vanID || '-';
+                
+                // Second table
                 document.getElementById('previewRrNumber').textContent = trip.rrNumber || '-';
                 document.getElementById('previewHallconNumber').textContent = trip.hallconNumber || '-';
-                document.getElementById('previewDispatcher').textContent = trip.dispatcher || '-';
+                
+                // Third table
                 document.getElementById('previewCrewNames').textContent = trip.crewNames || '-';
                 document.getElementById('previewDestination').textContent = trip.destination || '-';
-                document.getElementById('previewStartOdometer').textContent = trip.startOdometer || '-';
-                
-                // End of trip
-                document.getElementById('previewEndOdometer').textContent = trip.dropcrewOdometer || '-';
-                document.getElementById('previewDropCrewTime').textContent = trip.dropcrewTime || '-';
-                document.getElementById('previewClockIn').textContent = trip.clockInTime || '-';
-                document.getElementById('previewClockOut').textContent = trip.clockOutTime || '-';
-                
-                // Totals
-                document.getElementById('previewTotalMiles').textContent = trip.totalMiles || '0';
-                document.getElementById('previewTotalWait').textContent = trip.totalWait || '0';
-                
-                // Notes
-                document.getElementById('previewNotes').textContent = trip.notes || 'No notes recorded';
+                document.getElementById('previewDispatcher').textContent = trip.dispatcher || '-';
                 
                 // Stops table
                 const stopsBody = document.getElementById('previewStopsBody');
@@ -178,18 +358,29 @@
                     trip.stops.forEach(stop => {
                         const row = stopsBody.insertRow();
                         row.innerHTML = `
-                            <td style="text-align: center; font-weight: bold;">${stop.index || '-'}</td>
-                            <td style="text-align: center;">${stop.times || ''}</td>
+                            <td>${stop.index || '-'}</td>
+                            <td>${stop.times || ''}</td>
                             <td style="text-align: left; padding-left: 15px;">${stop.location || ''}</td>
-                            <td style="text-align: center;">${stop.odometer || ''}</td>
-                            <td style="text-align: center;">${stop.why || ''}</td>
-                            <td style="text-align: center;">${stop.wait || '0'}</td>
+                            <td>${stop.odometer || ''}</td>
+                            <td>${stop.why || ''}</td>
+                            <td>${stop.wait || '0'}</td>
                         `;
                     });
                 } else {
                     const row = stopsBody.insertRow();
-                    row.innerHTML = '<td colspan="6" style="text-align: center; padding: 20px;">No stops recorded</td>';
+                    row.innerHTML = '<td colspan="6" style="padding: 30px;">No stops recorded</td>';
                 }
+                
+                // Notes
+                document.getElementById('previewNotes').textContent = trip.notes || '-';
+                
+                // Drop crew section
+                document.getElementById('previewDropCrewTime').textContent = trip.dropcrewTime || '-';
+                document.getElementById('previewEndOdometer').textContent = trip.dropcrewOdometer || '-';
+                document.getElementById('previewTotalWait').textContent = trip.totalWait || '0';
+                document.getElementById('previewTotalMiles').textContent = trip.totalMiles || '0';
+                document.getElementById('previewClockIn').textContent = trip.clockInTime || '-';
+                document.getElementById('previewClockOut').textContent = trip.clockOutTime || '-';
                 
             } catch (error) {
                 console.error('Preview error:', error);
@@ -211,10 +402,7 @@
                 }
             }
             
-            // Update document title for print dialog
             document.title = filename.replace('.pdf', '');
-            
-            // Trigger print dialog (user can save as PDF)
             window.print();
         }
         
