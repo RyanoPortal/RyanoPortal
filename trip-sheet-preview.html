@@ -65,6 +65,7 @@
         /* Boss-style tables */
         .boss-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
             margin: 30px auto;
             border: 7px solid black;
@@ -102,6 +103,7 @@
         
         .stops-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
             margin: 20px auto;
             border: 7px solid black;
@@ -131,6 +133,7 @@
         /* Notes section */
         .notes-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
             margin: 40px auto;
             border: 7px solid black;
@@ -161,6 +164,7 @@
         /* Drop crew table */
         .drop-crew-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
             margin: 40px auto;
             border: 8px solid black;
@@ -187,7 +191,7 @@
         }
         
         .separator-row {
-            background-color: #000000;
+            background-color: #e621c8;
             height: 15px;
         }
         
@@ -220,9 +224,9 @@
         <!-- Table 1: Trip Date, Type, Van ID -->
         <table class="boss-table">
             <tr>
-                <th>TRIP DATE</th>
-                <th>TRIP TYPE</th>
-                <th>VAN ID</th>
+                <th style="width: 33.3%;"></th>TRIP DATE</th>
+                <th style="width: 33.3%;">TRIP TYPE</th>
+                <th style="width: 33.3%;">VAN ID</th>
             </tr>
             <tr>
                 <td id="previewTripDate">-</td>
@@ -246,9 +250,9 @@
         <!-- Table 3: Names, To, Disp # -->
         <table class="boss-table">
             <tr>
-                <th style="width: 28%;">Name(s)</th>
-                <th style="width: 50%;">To?</th>
-                <th style="width: 20%;">Disp #</th>
+                <th style="width: 30%;">Name(s)</th>
+                <th style="width: 60%;">To?</th>
+                <th style="width: 10%;">Disp #</th>
             </tr>
             <tr>
                 <td id="previewCrewNames">-</td>
