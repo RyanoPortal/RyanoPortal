@@ -20,6 +20,7 @@
             color: black;
             padding: 0.5in;
             line-height: 1.2;
+            font-size: 10pt; /* Base font size reduced for print */
         }
 
         /* Buttons */
@@ -50,9 +51,9 @@
         /* Driver Name Header */
         .driver-header {
             text-align: center;
-            font-size: 32pt;
+            font-size: 18pt; /* Reduced from 32pt */
             font-weight: bold;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             border-bottom: 2px solid #0077cc;
             padding-bottom: 5px;
         }
@@ -60,126 +61,131 @@
         /* Main tables */
         .main-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
-            margin: 15px 0;
-            border: 3px solid black;
+            margin: 10px 0;
+            border: 2px solid black;
         }
 
         .main-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 16pt;
+            font-size: 12pt;
             font-weight: bold;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         .main-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 16pt;
+            font-size: 12pt;
             font-weight: bold;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         /* Stops table */
         .stops-header {
             text-align: center;
-            font-size: 24pt;
+            font-size: 16pt;
             font-weight: bold;
-            margin: 25px 0 10px 0;
+            margin: 20px 0 8px 0;
             text-decoration: underline;
         }
 
         .stops-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
-            margin: 10px 0;
-            border: 3px solid black;
+            margin: 8px 0;
+            border: 2px solid black;
         }
 
         .stops-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 16pt;
+            font-size: 12pt;
             font-weight: bold;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         .stops-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 16pt;
+            font-size: 11pt;
             font-weight: bold;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         .stops-table td.location {
             text-align: left;
-            padding-left: 15px;
+            padding-left: 10px;
+            font-size: 10pt;
         }
 
         /* Notes section */
         .notes-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
-            margin: 20px 0;
-            border: 3px solid black;
+            margin: 15px 0;
+            border: 2px solid black;
         }
 
         .notes-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 16pt;
+            font-size: 12pt;
             font-weight: bold;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         .notes-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 14pt;
+            font-size: 10pt;
             font-weight: bold;
-            padding: 10px;
+            padding: 8px;
             text-align: left;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         /* Drop crew table */
         .drop-crew-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
-            margin: 20px 0;
-            border: 3px solid black;
+            margin: 15px 0;
+            border: 2px solid black;
         }
 
         .drop-crew-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 16pt;
+            font-size: 12pt;
             font-weight: bold;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         .drop-crew-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 16pt;
+            font-size: 12pt;
             font-weight: bold;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
-            border: 2px solid black;
+            border: 1px solid black;
         }
 
         .drop-crew-table .blue-bg {
@@ -189,10 +195,10 @@
 
         /* Keys section */
         .keys {
-            font-size: 10pt;
+            font-size: 9pt;
             text-align: center;
             margin: 10px 0;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         .keys .key {
@@ -200,13 +206,31 @@
             margin: 0 5px;
         }
 
+        /* PRINT SETTINGS - CRITICAL */
         @media print {
+            @page {
+                size: letter portrait;
+                margin: 0.5in;
+            }
+
             body {
                 padding: 0.5in;
+                font-size: 10pt;
             }
 
             .no-print {
                 display: none !important;
+            }
+
+            /* Force tables to fit */
+            .main-table, .stops-table, .notes-table, .drop-crew-table {
+                font-size: 9pt;
+                page-break-inside: avoid;
+            }
+
+            .stops-table td, .main-table td {
+                font-size: 9pt;
+                padding: 4px;
             }
         }
     </style>
@@ -224,9 +248,9 @@
         <!-- Table 1: Trip Date, Type, Van ID -->
         <table class="main-table">
             <tr>
-                <th>TRIP DATE</th>
-                <th>TRIP TYPE</th>
-                <th>VAN ID</th>
+            <th style="width: 33.3%;">TRIP DATE</th>
+            <th style="width: 33.3%;">TRIP TYPE</th>
+            <th style="width: 33.3%;">VAN ID</th>
             </tr>
             <tr>
                 <td id="previewTripDate">-</td>
@@ -238,8 +262,8 @@
         <!-- Table 2: RR #, Hallcon # -->
         <table class="main-table">
             <tr>
-                <th>RR #</th>
-                <th>Hallcon #</th>
+            <th style="width: 50%;">RR #</th>
+            <th style="width: 50%;">Hallcon #</th>
             </tr>
             <tr>
                 <td id="previewRrNumber">-</td>
@@ -250,9 +274,9 @@
         <!-- Table 3: Names, To, Disp # -->
         <table class="main-table">
             <tr>
-                <th>Name(s)</th>
-                <th>To?</th>
-                <th>Disp #</th>
+            <th style="width: 33.3%;">Name(s)</th>
+            <th style="width: 33.3%;">To?</th>
+            <th style="width: 33.3%;">Disp #</th>
             </tr>
             <tr>
                 <td id="previewCrewNames">-</td>
@@ -265,13 +289,13 @@
         <div class="stops-header">STOPS WITH CREW</div>
         <table class="stops-table" id="stopsTable">
             <thead>
-                <tr>
-                    <th>#</th>
-                    <th>TIMES</th>
-                    <th>LOCATION</th>
-                    <th>ODOMETER</th>
-                    <th>WHY?</th>
-                    <th>MINS</th>
+            <tr>
+            <th style="width: 5%;">#</th>
+            <th style="width: 25%;">TIMES</th>
+            <th style="width: 25%;">LOCATION</th>
+            <th style="width: 25%;">ODOMETER</th>
+            <th style="width: 10%;">WHY?</th>
+            <th style="width: 10%;">MINS</th>
                 </tr>
             </thead>
             <tbody id="previewStopsBody">
@@ -301,7 +325,7 @@
         <!-- Notes Section -->
         <table class="notes-table">
             <tr>
-                <th>NOTES/APPROVALS</th>
+                <th style="width: 100%;">NOTES/APPROVALS</th>
             </tr>
             <tr>
                 <td id="previewNotes">-</td>
