@@ -13,15 +13,15 @@
             print-color-adjust: exact;
             color-adjust: exact;
         }
-        
+
         body {
             font-family: 'Courier New', monospace;
             background: white;
             color: black;
-            padding: 30px;
-            line-height: 1.4;
+            padding: 0.5in;
+            line-height: 1.2;
         }
-        
+
         /* Buttons */
         .no-print {
             position: fixed;
@@ -31,182 +31,182 @@
             gap: 10px;
             z-index: 9999;
         }
-        
+
         .no-print button {
-            padding: 12px 24px;
+            padding: 8px 16px;
             background: #0077cc;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             font-family: sans-serif;
         }
-        
+
         .no-print button:hover {
             background: #005fa3;
         }
-        
-        /* Main container */
-        .trip-sheet {
-            max-width: 8.5in;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
+
         /* Driver Name Header */
         .driver-header {
             text-align: center;
-            font-size: 38pt;
+            font-size: 32pt;
             font-weight: bold;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #0077cc;
+            padding-bottom: 5px;
         }
-        
-        /* Boss-style tables */
-        .boss-table {
+
+        /* Main tables */
+        .main-table {
             width: 100%;
-            table-layout: fixed;
             border-collapse: collapse;
-            margin: 30px auto;
-            border: 2px solid black;
-            background-color: black;
+            margin: 15px 0;
+            border: 3px solid black;
         }
-        
-        .boss-table th {
+
+        .main-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 10pt;
+            font-size: 16pt;
             font-weight: bold;
-            padding: 10px 10px;
+            padding: 8px;
             text-align: center;
-            border: 3px solid black;
+            border: 2px solid black;
         }
-        
-        .boss-table td {
+
+        .main-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 10pt;
+            font-size: 16pt;
             font-weight: bold;
-            padding: 10px 10px;
+            padding: 8px;
             text-align: center;
-            border: 3px solid black;
+            border: 2px solid black;
         }
-        
+
         /* Stops table */
         .stops-header {
             text-align: center;
-            font-size: 42pt;
+            font-size: 24pt;
             font-weight: bold;
-            margin: 40px 0 20px 0;
+            margin: 25px 0 10px 0;
             text-decoration: underline;
         }
-        
+
         .stops-table {
             width: 100%;
-            table-layout: fixed;
             border-collapse: collapse;
-            margin: 20px auto;
-            border: 2px solid black;
-            background-color: black;
+            margin: 10px 0;
+            border: 3px solid black;
         }
-        
+
         .stops-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 10pt;
+            font-size: 16pt;
             font-weight: bold;
-            padding: 15px 8px;
+            padding: 8px;
             text-align: center;
-            border: 3px solid black;
+            border: 2px solid black;
         }
-        
+
         .stops-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 10pt;
+            font-size: 16pt;
             font-weight: bold;
-            padding: 12px 8px;
+            padding: 8px;
             text-align: center;
-            border: 3px solid black;
+            border: 2px solid black;
         }
-        
+
+        .stops-table td.location {
+            text-align: left;
+            padding-left: 15px;
+        }
+
         /* Notes section */
         .notes-table {
             width: 100%;
-            table-layout: fixed;
             border-collapse: collapse;
-            margin: 40px auto;
-            border: 2px solid black;
-            background-color: black;
+            margin: 20px 0;
+            border: 3px solid black;
         }
-        
+
         .notes-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 10pt;
+            font-size: 16pt;
             font-weight: bold;
-            padding: 20px;
+            padding: 10px;
             text-align: center;
-            border: 3px solid black;
+            border: 2px solid black;
         }
-        
+
         .notes-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 13pt;
+            font-size: 14pt;
             font-weight: bold;
-            padding: 5px 20px;
+            padding: 10px;
             text-align: left;
-            border: 3px solid black;
-            min-height: 200px;
+            border: 2px solid black;
         }
-        
+
         /* Drop crew table */
         .drop-crew-table {
             width: 100%;
-            table-layout: fixed;
             border-collapse: collapse;
-            margin: 40px auto;
-            border: 8px solid black;
+            margin: 20px 0;
+            border: 3px solid black;
         }
-        
+
         .drop-crew-table th {
             background-color: #5e9868;
             color: #000000;
-            font-size: 13pt;
+            font-size: 16pt;
             font-weight: bold;
-            padding: 25px 15px;
+            padding: 8px;
             text-align: center;
-            border: 3px solid black;
+            border: 2px solid black;
         }
-        
+
         .drop-crew-table td {
             background-color: #d7e4d8;
             color: #000000;
-            font-size: 13pt;
+            font-size: 16pt;
             font-weight: bold;
-            padding: 20px 15px;
+            padding: 8px;
             text-align: center;
-            border: 3px solid black;
+            border: 2px solid black;
         }
-        
-        .separator-row {
-            background-color: #e621c8;
-            height: 15px;
+
+        .drop-crew-table .blue-bg {
+            background-color: #6a91b8;
+            color: #000000;
         }
-        
-        .separator-row td {
-            background-color: #000000;
-            border: 1px solid black;
+
+        /* Keys section */
+        .keys {
+            font-size: 10pt;
+            text-align: center;
+            margin: 10px 0;
+            line-height: 1.4;
         }
-        
+
+        .keys .key {
+            display: inline-block;
+            margin: 0 5px;
+        }
+
         @media print {
-            body { 
-                padding: 0.5in; 
+            body {
+                padding: 0.5in;
             }
-            
-            .no-print { 
-                display: none !important; 
+
+            .no-print {
+                display: none !important;
             }
         }
     </style>
@@ -220,13 +220,13 @@
     <div class="trip-sheet">
         <!-- Driver Name Header -->
         <div class="driver-header" id="previewDriverName">DRIVER NAME</div>
-        
+
         <!-- Table 1: Trip Date, Type, Van ID -->
-        <table class="boss-table">
+        <table class="main-table">
             <tr>
-                <th style="width: 33.3%;">TRIP DATE</th>
-                <th style="width: 33.3%;">TRIP TYPE</th>
-                <th style="width: 33.3%;">VAN ID</th>
+                <th>TRIP DATE</th>
+                <th>TRIP TYPE</th>
+                <th>VAN ID</th>
             </tr>
             <tr>
                 <td id="previewTripDate">-</td>
@@ -234,25 +234,25 @@
                 <td id="previewVanId">-</td>
             </tr>
         </table>
-        
+
         <!-- Table 2: RR #, Hallcon # -->
-       <table class="boss-table">
-        <tr>
-            <th style="width: 50%;">RR #</th>
-            <th style="width: 50%;">Hallcon #</th>
-        </tr>
-        <tr>
-            <td id="previewRrNumber">-</td>
-            <td id="previewHallconNumber">-</td>
-        </tr>
-    </table>   
-        
-        <!-- Table 3: Names, To, Disp # -->
-        <table class="boss-table">
+        <table class="main-table">
             <tr>
-                <th style="width: 30%;">Name(s)</th>
-                <th style="width: 60%;">To?</th>
-                <th style="width: 10%;">Disp #</th>
+                <th>RR #</th>
+                <th>Hallcon #</th>
+            </tr>
+            <tr>
+                <td id="previewRrNumber">-</td>
+                <td id="previewHallconNumber">-</td>
+            </tr>
+        </table>
+
+        <!-- Table 3: Names, To, Disp # -->
+        <table class="main-table">
+            <tr>
+                <th>Name(s)</th>
+                <th>To?</th>
+                <th>Disp #</th>
             </tr>
             <tr>
                 <td id="previewCrewNames">-</td>
@@ -260,24 +260,44 @@
                 <td id="previewDispatcher">-</td>
             </tr>
         </table>
-        
+
         <!-- Stops Section -->
         <div class="stops-header">STOPS WITH CREW</div>
         <table class="stops-table" id="stopsTable">
             <thead>
                 <tr>
-                    <th style="width: 8%;">#</th>
-                    <th style="width: 18%;">TIMES</th>
-                    <th style="width: 30%;">LOCATION</th>
-                    <th style="width: 16%;">ODOMETER</th>
-                    <th style="width: 10%;">WHY</th>
-                    <th style="width: 12%;">MIN'S</th>
+                    <th>#</th>
+                    <th>TIMES</th>
+                    <th>LOCATION</th>
+                    <th>ODOMETER</th>
+                    <th>WHY?</th>
+                    <th>MINS</th>
                 </tr>
             </thead>
             <tbody id="previewStopsBody">
             </tbody>
         </table>
-        
+
+        <!-- Keys -->
+        <div class="keys">
+            <div class="key"><strong>LOCATION ABBREVIATION KEY:</strong></div><br>
+            <div class="key">Y.O.: Yard Office</div>
+            <div class="key">Clarks: Clarksville</div>
+            <div class="key">Russ: Russellville</div>
+            <div class="key">LNGVW: Longview</div>
+            <div class="key">V.B.: Van Buren</div>
+            <div class="key">P.B.: Pine Bluff</div>
+            <div class="key">POP.B: Poplar Bluff</div>
+        </div>
+        <div class="keys">
+            <div class="key"><strong>STOP REASON KEY (5th Column):</strong></div><br>
+            <div class="key">PU: PICKUP</div>
+            <div class="key">CS: CREW STOP</div>
+            <div class="key">SC: SWAP CREW</div>
+            <div class="key">W8: WAIT</div>
+            <div class="key">DC: DROP CREW</div>
+        </div>
+
         <!-- Notes Section -->
         <table class="notes-table">
             <tr>
@@ -287,31 +307,28 @@
                 <td id="previewNotes">-</td>
             </tr>
         </table>
-        
+
         <!-- Drop Crew Table -->
         <table class="drop-crew-table">
             <tr>
-                <th>DROP CREW TIME</th>
-                <th>DROP CREW ODOMETER</th>
+                <th class="blue-bg">DROP CREW TIME</th>
+                <th class="blue-bg">DROP CREW ODOMETER</th>
             </tr>
             <tr>
                 <td id="previewDropCrewTime">-</td>
                 <td id="previewEndOdometer">-</td>
             </tr>
             <tr>
-                <th>TOTAL WAIT</th>
-                <th>TOTAL MILES</th>
+                <th class="blue-bg">TOTAL WAIT</th>
+                <th class="blue-bg">TOTAL MILES</th>
             </tr>
             <tr>
                 <td id="previewTotalWait">0</td>
                 <td id="previewTotalMiles">0</td>
             </tr>
-            <tr class="separator-row">
-                <td colspan="2">&nbsp;</td>
-            </tr>
             <tr>
-                <th>Clock In (Van PU Time)</th>
-                <th>Clock Out (Van DO Time)</th>
+                <th class="blue-bg">Clock In (Van PU Time)</th>
+                <th class="blue-bg">Clock Out (Van DO Time)</th>
             </tr>
             <tr>
                 <td id="previewClockIn">-</td>
@@ -333,38 +350,38 @@
                 `;
                 return;
             }
-            
+
             try {
                 const trip = JSON.parse(raw);
-                
+
                 // Driver name in header
                 document.getElementById('previewDriverName').textContent = trip.driverName || 'DRIVER NAME';
-                
+
                 // Top table
                 document.getElementById('previewTripDate').textContent = trip.tripdate || '-';
                 document.getElementById('previewTripType').textContent = trip.tripType || '-';
                 document.getElementById('previewVanId').textContent = trip.vanID || '-';
-                
+
                 // Second table
                 document.getElementById('previewRrNumber').textContent = trip.rrNumber || '-';
                 document.getElementById('previewHallconNumber').textContent = trip.hallconNumber || '-';
-                
+
                 // Third table
                 document.getElementById('previewCrewNames').textContent = trip.crewNames || '-';
                 document.getElementById('previewDestination').textContent = trip.destination || '-';
                 document.getElementById('previewDispatcher').textContent = trip.dispatcher || '-';
-                
+
                 // Stops table
                 const stopsBody = document.getElementById('previewStopsBody');
                 stopsBody.innerHTML = '';
-                
+
                 if (trip.stops && trip.stops.length > 0) {
                     trip.stops.forEach(stop => {
                         const row = stopsBody.insertRow();
                         row.innerHTML = `
                             <td>${stop.index || '-'}</td>
                             <td>${stop.times || ''}</td>
-                            <td style="text-align: left; padding-left: 15px;">${stop.location || ''}</td>
+                            <td class="location">${stop.location || ''}</td>
                             <td>${stop.odometer || ''}</td>
                             <td>${stop.why || ''}</td>
                             <td>${stop.wait || '0'}</td>
@@ -372,12 +389,12 @@
                     });
                 } else {
                     const row = stopsBody.insertRow();
-                    row.innerHTML = '<td colspan="6" style="padding: 30px;">No stops recorded</td>';
+                    row.innerHTML = '<td colspan="6" style="padding: 15px;">No stops recorded</td>';
                 }
-                
+
                 // Notes
                 document.getElementById('previewNotes').textContent = trip.notes || '-';
-                
+
                 // Drop crew section
                 document.getElementById('previewDropCrewTime').textContent = trip.dropcrewTime || '-';
                 document.getElementById('previewEndOdometer').textContent = trip.dropcrewOdometer || '-';
@@ -385,17 +402,17 @@
                 document.getElementById('previewTotalMiles').textContent = trip.totalMiles || '0';
                 document.getElementById('previewClockIn').textContent = trip.clockInTime || '-';
                 document.getElementById('previewClockOut').textContent = trip.clockOutTime || '-';
-                
+
             } catch (error) {
                 console.error('Preview error:', error);
                 alert('Error loading preview: ' + error.message);
             }
         }
-        
+
         function downloadPDF() {
             const raw = localStorage.getItem('lastTrip');
             let filename = 'trip-sheet.pdf';
-            
+
             if (raw) {
                 try {
                     const trip = JSON.parse(raw);
@@ -405,11 +422,11 @@
                     console.error('Error parsing RR number:', e);
                 }
             }
-            
+
             document.title = filename.replace('.pdf', '');
             window.print();
         }
-        
+
         window.onload = loadPreview;
     </script>
 </body>
