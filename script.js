@@ -191,24 +191,28 @@ document.getElementById("submitTrip").addEventListener("click", async () => {
     };
 
     // Save to localStorage for preview
-    localStorage.setItem('lastTrip', JSON.stringify(trip));
+localStorage.setItem('lastTrip', JSON.stringify(trip));
 
-    try {
-        await fetch(SHEETS_WEB_APP_URL, {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify(trip)
-        });
+try {
+    await fetch(SHEETS_WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(trip)
+    });
 
-        alert("Submitted Successfully!");
-        // Open preview + auto-download PNG
-        downloadTripPNG();
-        // Clear the form after
-        clearForm();
-    } catch (e) {
-        alert("Error submitting. Check connection.");
-    }
+    alert("Submitted Successfully!");
+
+    // Open preview + auto-trigger PDF download
+    window.open('trip-sheet-preview.html?auto=1', '_blank');
+
+    // Clear the form after
+    clearForm();
+
+} catch (e) {
+    alert("Error submitting. Check connection.");
+}
 });
+
 
 // Clear form function
 function clearForm() {
