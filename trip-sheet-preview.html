@@ -1,15 +1,18 @@
 <!-- ===================== HEAD SECTION ===================== -->
-
-<!DOCTYPE html>
-<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trip Sheet - Print Preview</title>
-    
+
+<!-- Needed for PNG/PDF auto-download -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-
+<!-- Needed ONLY for your existing PDF button -->
+<script>
+function downloadPDF() {
+    window.print();
+}
+</script>
 <style>
 * {
     box-sizing: border-box;
